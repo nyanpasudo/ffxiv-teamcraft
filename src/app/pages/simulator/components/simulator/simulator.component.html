@@ -36,6 +36,13 @@
             (click)="showMinStats(simulation)">
         <mat-icon>offline_pin</mat-icon>
     </button>
+    <button mat-mini-fab
+            *ngIf="simulation$ | async as simulation"
+            matTooltip="{{'SIMULATOR.SOLVER.Title' | translate}}"
+            matTooltipPosition="{{isMobile()?'below':'right'}}"
+            (click)="solve(simulation)">
+        <mat-icon>offline_pin</mat-icon>
+    </button>
 </div>
 <mat-expansion-panel [expanded]="customMode" #configPanel>
     <mat-expansion-panel-header>

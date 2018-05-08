@@ -38,6 +38,7 @@ import {MaintenanceGuard} from '../maintenance/maintenance.guard';
 import { SimulationMinStatsPopupComponent } from './components/simulation-min-stats-popup/simulation-min-stats-popup.component';
 import {ImportMacroPopupComponent} from './components/import-macro-popup/import-macro-popup.component';
 import {ConsumablesService} from './model/consumables.service';
+import { SimulationSolvePopupComponent } from './components/simulation-solve-popup/simulation-solve-popup.component';
 
 const routes: Routes = [
     {
@@ -109,13 +110,15 @@ const routes: Routes = [
         ImportRotationPopupComponent,
         ImportMacroPopupComponent,
         MacroPopupComponent,
-        SimulationMinStatsPopupComponent
+        SimulationMinStatsPopupComponent,
+        SimulationSolvePopupComponent
     ],
     entryComponents: [
         ImportRotationPopupComponent,
         ImportMacroPopupComponent,
         MacroPopupComponent,
-        SimulationMinStatsPopupComponent
+        SimulationMinStatsPopupComponent,
+        SimulationSolvePopupComponent
     ],
     providers: [
         CraftingActionsRegistry,
