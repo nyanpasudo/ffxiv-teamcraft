@@ -27,7 +27,7 @@ export class Simulation {
     public steps: ActionResult[] = [];
 
     constructor(public readonly recipe: Craft, public readonly actions: CraftingAction[], private _crafterStats: CrafterStats,
-                hqIngredients: { id: number, amount: number }[] = []) {
+                public hqIngredients: { id: number, amount: number }[] = []) {
         this.durability = recipe.durability;
         this.availableCP = this._crafterStats.cp;
         this.maxCP = this.availableCP;

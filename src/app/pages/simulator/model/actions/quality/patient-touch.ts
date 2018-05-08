@@ -12,7 +12,9 @@ export class PatientTouch extends QualityAction {
     }
 
     onFail(simulation: Simulation): void {
-        simulation.getBuff(Buff.INNER_QUIET).stacks = Math.floor(simulation.getBuff(Buff.INNER_QUIET).stacks / 2);
+        if (simulation.hasBuff(Buff.INNER_QUIET)) {
+            simulation.getBuff(Buff.INNER_QUIET).stacks = Math.floor(simulation.getBuff(Buff.INNER_QUIET).stacks / 2);
+        }
     }
 
     canBeUsed(simulationState: Simulation): boolean {

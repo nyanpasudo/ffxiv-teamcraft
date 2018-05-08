@@ -135,7 +135,7 @@ export class CraftingActionsRegistry {
         {short: 'finishingTouches', full: 'FinishingTouches'},
     ];
 
-    private static readonly ALL_ACTIONS: { name: string, action: CraftingAction }[] = [
+    public static readonly ALL_ACTIONS: { name: string, action: CraftingAction }[] = [
         // Progress actions
         {name: 'BasicSynthesis', action: new BasicSynthesis()},
         {name: 'StandardSynthesis', action: new StandardSynthesis()},
