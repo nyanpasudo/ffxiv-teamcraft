@@ -33,7 +33,7 @@ import {LocalizedDataService} from '../../../../core/data/localized-data.service
 import {TranslateService} from '@ngx-translate/core';
 import {Language} from 'app/core/data/language';
 import {ConsumablesService} from 'app/pages/simulator/model/consumables.service';
-import {SimulationSolvePopupComponent} from '../simulation-solve-popup/simulation-solve-popup.component';
+import {Solver} from '../../solver/solver';
 
 @Component({
     selector: 'app-simulator',
@@ -195,7 +195,8 @@ export class SimulatorComponent implements OnInit, OnDestroy {
     }
 
     public solve(simulation: Simulation): void {
-        this.dialog.open(SimulationSolvePopupComponent, {data: simulation});
+        const solver = new Solver(simulation);
+        this.actions$.next(solver.run());
     }
 
     ngOnInit(): void {

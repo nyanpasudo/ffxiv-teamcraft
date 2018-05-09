@@ -1,16 +1,16 @@
-import {CraftingActionsRegistry} from '../model/crafting-actions-registry';
 import {Simulation} from '../simulation/simulation';
 import {CraftingAction} from '../model/actions/crafting-action';
+import {Genome} from './genome';
 
 export class Solver {
 
-    private static readonly MUTATION_RATE = .05;
+    private static readonly MUTATION_RATE = .01;
 
-    private static readonly POPULATION_SIZE = 1000;
+    private static readonly POPULATION_SIZE = 50;
 
-    private static readonly ITERATIONS = 500;
+    private static readonly ITERATIONS = 25;
 
-    private population: number[][];
+    private population: Genome[];
 
     constructor(private readonly simulation: Simulation) {
     }
@@ -18,10 +18,10 @@ export class Solver {
     public run(): CraftingAction[] {
         this.initPopulation();
         for (let _ = 0; _ < Solver.ITERATIONS; _++) {
-            console.log('New generation !', _);
             this.newGeneration();
         }
-        return this.genomeToRotation(this.pickBest());
+        const best = this.pickBest();
+        return best.rotation;
     }
 
     private newGeneration(): void {
@@ -41,12 +41,12 @@ export class Solver {
         while (offsprings.length < Solver.POPULATION_SIZE / 2) {
             const p1 = newPopulation[Math.floor(Math.random() * newPopulation.length)];
             const p2 = newPopulation[Math.floor(Math.random() * newPopulation.length)];
-            let newOffsprings: [number[], number[]];
+            let newOffsprings: [Genome, Genome];
             // Use parent with shortest genome as parent 1, use p1 as first if they are equal.
             if (p1.length > p2.length) {
-                newOffsprings = this.crossover(p2, p1);
+                newOffsprings = p2.crossover(p1);
             } else {
-                newOffsprings = this.crossover(p1, p2);
+                newOffsprings = p1.crossover(p2);
             }
             offsprings.push(...newOffsprings);
         }
@@ -54,7 +54,7 @@ export class Solver {
         offsprings = offsprings.map(genome => {
             // Should this one mutate?
             if (Math.random() <= Solver.MUTATION_RATE) {
-                return this.mutate(genome);
+                genome.mutate();
             }
             return genome;
         });
@@ -62,29 +62,15 @@ export class Solver {
         this.population = newPopulation;
     }
 
-    private mutate(genome: number[]): number[] {
-        const indexToMutate = Math.ceil(Math.random() * genome.length);
-        genome[indexToMutate] = this.newChromosome();
-        return genome;
-    }
-
-    private crossover(parentA: number[], parentB: number[]): [number[], number[]] {
-        const res: [number[], number[]] = [[], []];
-        const crossoverPoint = Math.floor(parentA.length);
-        res[0] = parentA.slice(0, crossoverPoint).concat(parentB.slice(crossoverPoint));
-        res[1] = parentB.slice(0, crossoverPoint).concat(parentA.slice(crossoverPoint));
-        return res;
-    }
-
     /**
      * The routnament function is a simple weighted random base don each rotation fitness note.
-     * @param {number[]} a
-     * @param {number[]} b
-     * @returns {number[]}
+     * @param {Genome} a
+     * @param {Genome} b
+     * @returns {Genome}
      */
-    private tournament(a: number[], b: number[]): number[] {
-        const noteA = this.fitness(a);
-        const noteB = this.fitness(b);
+    private tournament(a: Genome, b: Genome): Genome {
+        const noteA = a.fitness;
+        const noteB = b.fitness;
         const totalNote = noteA + noteB;
         const random = Math.ceil(Math.random() * totalNote);
         if (random > noteA) {
@@ -93,72 +79,45 @@ export class Solver {
         return b;
     }
 
-    private fitness(genome: number[]): number {
-        // Minimum note is 1, to let a chance for failing rotations as they might have some good things.
-        let note = 1;
-        const simulation = new Simulation(this.simulation.recipe, this.genomeToRotation(genome), this.simulation.crafterStats,
-            this.simulation.hqIngredients);
-        simulation.run();
-        // If simulation is a success, add some points
-        if (simulation.success) {
-            note += 5;
+    private pickRandom(): Genome {
+        const weigthedArray = this.population
+        // First, let's return only fitnesses
+            .map((genome) => {
+                return genome.fitness
+            })
+            // Then, each row is previous + current.
+            .map((fitness, index, array) => {
+                const previous = index === 0 ? 0 : array[index - 1];
+                return previous + fitness;
+            });
+        // Last value is maximum random
+        const random = Math.random() * weigthedArray[weigthedArray.length - 1];
+        let resultIndex = 0;
+        while (random > weigthedArray[resultIndex]) {
+            resultIndex++;
         }
-        // Add points relative to quality% done
-        note += Math.ceil(simulation.quality / simulation.recipe.quality * 10);
-        note -= Math.ceil(simulation.steps.length / 20);
-        return note;
+        return this.population[resultIndex];
     }
 
-    private pickRandom(): number[] {
-        return this.population[Math.floor(Math.random() * this.population.length)];
-    }
-
-    private pickBest(): number[] {
+    private pickBest(): Genome {
         const successOnly = this.population.filter(genome => {
-            const simulation = new Simulation(this.simulation.recipe, this.genomeToRotation(genome), this.simulation.crafterStats,
+            const simulation = new Simulation(this.simulation.recipe, genome.rotation, this.simulation.crafterStats,
                 this.simulation.hqIngredients);
             simulation.run();
             return simulation.success === true;
         });
         // If there's at least one successfull, return it.
         if (successOnly.length > 0) {
-            return successOnly.sort((a, b) => this.fitness(a) > this.fitness(b) ? 1 : -1)[0];
+            return successOnly.sort((a, b) => a.fitness > b.fitness ? 1 : -1)[0];
         }
         // Else return the best unsuccessful rotation.
-        return this.population.sort((a, b) => this.fitness(a) > this.fitness(b) ? 1 : -1)[0];
-    }
-
-    private genomeToRotation(genome: number[]): CraftingAction[] {
-        return genome.map(index => CraftingActionsRegistry.ALL_ACTIONS[index].action);
+        return this.population.sort((a, b) => a.fitness > b.fitness ? 1 : -1)[0];
     }
 
     private initPopulation(): void {
         this.population = [];
         for (let i = 0; i < Solver.POPULATION_SIZE; i++) {
-            this.population.push(this.newGenome());
+            this.population.push(new Genome(this.simulation));
         }
-    }
-
-    private newGenome(): number[] {
-        const genome = [];
-        let simulation: Simulation;
-        // Run simulation with the newly added chromosome, only stop once simulation is success or fail.
-        do {
-            genome.push(this.newChromosome());
-            simulation = new Simulation(this.simulation.recipe, this.genomeToRotation(genome), this.simulation.crafterStats,
-                this.simulation.hqIngredients);
-            simulation.run(true);
-        } while (simulation.success === undefined);
-        return genome;
-    }
-
-    private newChromosome(): number {
-        // Each action is represented by an simple index, easier for mutations.
-        let actionIndex = Math.floor(Math.random() * CraftingActionsRegistry.ALL_ACTIONS.length);
-        while (this.simulation.success === undefined &&
-        !CraftingActionsRegistry.ALL_ACTIONS[actionIndex].action.canBeUsed(this.simulation)) {
-            actionIndex = Math.floor(Math.random() * CraftingActionsRegistry.ALL_ACTIONS.length);
-        }
-        return actionIndex;
     }
 }

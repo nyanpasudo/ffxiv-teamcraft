@@ -27,18 +27,17 @@ import {
     MatListModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatSelectModule, MatSnackBarModule,
+    MatSelectModule,
+    MatSnackBarModule,
     MatTooltipModule,
 } from '@angular/material';
-import { MacroPopupComponent } from './components/macro-popup/macro-popup.component';
+import {MacroPopupComponent} from './components/macro-popup/macro-popup.component';
 import {ClipboardModule} from 'ngx-clipboard';
 import {CustomLinksModule} from '../custom-links/custom-links.module';
-import {PatreonGuard} from '../../core/guard/patreon.guard';
 import {MaintenanceGuard} from '../maintenance/maintenance.guard';
-import { SimulationMinStatsPopupComponent } from './components/simulation-min-stats-popup/simulation-min-stats-popup.component';
+import {SimulationMinStatsPopupComponent} from './components/simulation-min-stats-popup/simulation-min-stats-popup.component';
 import {ImportMacroPopupComponent} from './components/import-macro-popup/import-macro-popup.component';
 import {ConsumablesService} from './model/consumables.service';
-import { SimulationSolvePopupComponent } from './components/simulation-solve-popup/simulation-solve-popup.component';
 
 const routes: Routes = [
     {
@@ -110,15 +109,13 @@ const routes: Routes = [
         ImportRotationPopupComponent,
         ImportMacroPopupComponent,
         MacroPopupComponent,
-        SimulationMinStatsPopupComponent,
-        SimulationSolvePopupComponent
+        SimulationMinStatsPopupComponent
     ],
     entryComponents: [
         ImportRotationPopupComponent,
         ImportMacroPopupComponent,
         MacroPopupComponent,
-        SimulationMinStatsPopupComponent,
-        SimulationSolvePopupComponent
+        SimulationMinStatsPopupComponent
     ],
     providers: [
         CraftingActionsRegistry,

@@ -1,8 +1,0 @@
-<h2 mat-dialog-title>{{'SIMULATOR.SOLVER.Title' | translate}}</h2>
-<div mat-dialog-content>
-    <app-action *ngFor="let action of rotation" [hideCost]="true" [action]="action"
-                [jobId]="simulation.crafterStats.jobId"></app-action>
-</div>
-<div mat-dialog-actions>
-    <button mat-raised-button mat-dialog-close color="accent">{{'Close' | translate}}</button>
-</div>
