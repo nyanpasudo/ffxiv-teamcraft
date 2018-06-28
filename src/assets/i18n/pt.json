@@ -1,4 +1,9 @@
 {
+  "ITEMS": {
+    "Title": "Itens",
+    "No_match": "Sem itens encontrados",
+    "Item_name": "Nome do item"
+  },
   "ABOUT.Contributors": "Contribuidores",
   "ABOUT.Copyright_notice_content": "FINAL FANTASY é uma marca registrada da Square Enix Holdings Co., Ltd. br>FINAL FANTASY XIV © 2010 - 2017 SQUARE ENIX CO., LTD. Todos os Direitos Reservados.<br>FFXIV Teamcraft não é afiliado com a Square Enix.",
   "ABOUT.Copyright_notice_title": "Notas de Copyright",
@@ -148,7 +153,7 @@
   "LIST_TAGS.ARM": "ARM",
   "LIST_TAGS.AST": "AST",
   "LIST_TAGS.BLM": "BLM",
-  "LIST_TAGS.BOT": "BOT",
+  "LIST_TAGS.BOT": "BTN",
   "LIST_TAGS.BRD": "BRD",
   "LIST_TAGS.BSM": "BSM",
   "LIST_TAGS.CASTER": "Caster",
@@ -221,7 +226,7 @@
   "No": "Não",
   "No_favorites": "Não favorito",
   "No_items_found": "Nenhum item encontrado",
-  "No_matching_recipe": "Nenhuma receita encontrada",
+
   "Not_own_list_outdated": "Essa lista é antiga, por favor peça para o dono gerá-la novamente",
   "Not_verified": "Seu email ainda não foi verificado, por favor cheque sua caixa de entrada",
   "Open": "Abrir",
@@ -245,6 +250,8 @@
   "PERMISSIONS.Write": "Escreva",
   "PERMISSIONS.Write_description": "Isso dá a habilidade de adicionar itens, adicionar listas (para workshops)",
   "PERMISSIONS.You": "Vocè",
+  "PERMISSIONS.Propagate_changes": "Propagar permissões para a lista dentro do workshop",
+  "PERMISSIONS.Propagate_changes_done": "Mudanças propagadas a lista dentro do workshop",
   "PROFILE.Email_already_used": "Email já ligado a outra conta",
   "PROFILE.Feature_requires_nickname": "Essa opção requer que você use um nome de usuário",
   "PROFILE.HELP.Edit": "Por clicar no botão de edição, você pode editar o personagem ligado a sua conta do FFXIV Teamcraft.",
@@ -258,6 +265,8 @@
   "PROFILE.Patreon_features": "Funcionalidades para apoiadores patreon",
   "PROFILE.Patreon_link_email": "Ligar email patreon",
   "PROFILE.Patreon_supporter": "Apoiador Patreon",
+  "PROFILE.Contacts": "Contatos",
+  "PROFILE.New_contact": "Novo ID de contato",
   "Password": "Senha",
   "Password_Confirmation": "Confirmação",
   "Patreon_popup_body": "Assim que a base de usuários crescer, o FFXIV Teamcraft irá precisar de um host maior para que tudo funcione direito com bom tempo de resposta. Por conta disso, precisamos do seu apoio para garantir que temos fundos suficientes para pagar a hospedagem que você merece, e garantir sua experiência com a ferramenta a melhor possível",
@@ -278,8 +287,8 @@
   "RECIPES.HELP.Quick_list": "Você pode criar listas rápidas no botão \"Lista Rápida\", isso vai criar uma lista instantânea com o nome do item, que será removida assim que completa.",
   "RECIPES.HELP.Welcome": "Bem vindo a página de receitas, essa página é feita para buscar, filtrar e adicionar receitas a lista de craft.",
   "Recipe_Added": "{{itemname}} adicionado a lista {{listname}}",
-  "Recipe_name": "Nome da receita",
-  "Recipes": "Receitas",
+
+
   "Recipes_Added": "Resultados adicionados a lista  {{listname}}",
   "Reduction": "Redução",
   "Regenerating_lists": "Recriando listas",

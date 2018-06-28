@@ -1,4 +1,10 @@
 {
+  "ITEMS": {
+    "Title": "Items",
+    "No_match": "No matching items",
+    "Item_name": "Item name",
+    "Only_recipes": "Only recipes"
+  },
   "Download_desktop_app": "Download desktop app",
   "Delete": "Delete",
   "Timers": "Timers",
@@ -61,7 +67,9 @@
     "No_alarm": "No alarms set",
     "Add_alarm": "Add alarm",
     "Alarm_created": "Alarm created",
-    "Alarm_already_created": "Alarm already set"
+    "Alarm_already_created": "Alarm already set",
+    "Custom_sound": "Custom alarm sound",
+    "New_group": "New alarm group"
   },
   "Item_name": "Item name",
   "No_items_found": "No item found",
@@ -77,15 +85,15 @@
   "New_List": "New List",
   "Please_enter_a_name": "Please enter a name",
   "Lists": "Lists",
-  "Recipes": "Recipes",
+
   "items": "items",
   "Confirm": "Confirm",
   "Cancel": "Cancel",
   "Edit": "Edit",
   "Add_a_list": "Add a list",
   "List_name": "List name",
-  "Recipe_name": "Recipe name",
-  "No_matching_recipe": "No matching recipe",
+
+
   "Reset_progression": "Reset progression",
   "Gardening": "Gardening",
   "Hunting": "Hunting",
@@ -141,6 +149,8 @@
   "Server_name": "Server Name",
   "Add_all_recipes": "Add results to a list",
   "Character_not_found": "Character not found",
+  "Use_lodestoneId": "Use lodestone ID",
+  "LodestoneId": "Lodestone ID",
   "List_forked": "List copied to your account",
   "List_fork": "Copy this list to your account",
   "List_not_found": "List not found or you don't have access to it",
@@ -207,6 +217,7 @@
     "Patreon_email": "Patreon Email",
     "Contacts": "Contacts",
     "New_contact": "New contact's user ID",
+    "Save_for_all": "Save for all",
     "HELP": {
       "Welcome": "Welcome to profile page, this is the place where you can see and edit your own profile.",
       "Edit": "By clicking on the edit icon, you can edit the character linked to your FFXIV Teamcraft account.",
@@ -217,6 +228,7 @@
     "Regenerate_all": "Regenerate all lists",
     "Merge_lists": "Merge lists",
     "Shared_lists": "Lists you have write access to",
+    "Add_selection": "Add selection to a list",
     "IMPORT": {
       "Title": "Import list from external website",
       "Paste_link_step_title": "Paste your link to the external list",
@@ -233,7 +245,20 @@
   },
   "LIST": {
     "Copied_x_times": "Copied {{count}} times",
-    "Enable_crystals_tracking": "Enable crystals tracking"
+    "Enable_crystals_tracking": "Enable crystals tracking",
+    "Copy_as_text": "Copy as text",
+    "Total_price": "Total trades (gils and currencies)",
+    "BUTTONS": {
+      "Add_link_description": "Create a custom link for this list",
+      "Create_template_description": "Create a template link for this list, which will create a copy of the list for whoever opens it",
+      "Copy_template_url_description": "Copy the template link for this list, which will create a copy of the list for whoever opens it",
+      "Share_description": "Copy share link to your clipboard",
+      "Open": "Open list",
+      "Open_description": "Access the list",
+      "Delete": "Delete list",
+      "Delete_description": "Deletes the list",
+      "Delete_warning": "Deleting a list can't be undone"
+    }
   },
   "LIST_DETAILS": {
     "List_finished": "List completed",
@@ -326,7 +351,7 @@
     "ALC": "ALC",
     "CUL": "CUL",
     "MIN": "MIN",
-    "BOT": "BOT",
+    "BOT": "BTN",
     "FSH": "FSH"
   },
   "RECIPES": {
@@ -407,6 +432,8 @@
     "Not_found": "Page not found"
   },
   "SIMULATOR": {
+    "Fixed_notification_number": "Fixed notification",
+    "Starting_echo_number": "Notification #",
     "Import_macro": "Import from ingame macro",
     "Ingame_macro": "Ingame macro",
     "Min_stats": "Minimum stats",
@@ -439,6 +466,13 @@
     "Open_in_external": "Open in {{name}}'s sim",
     "Select_job_please": "Please select a job",
     "Rename_rotation": "Rename Rotation",
+    "Cross_class_setup": "Cross-class skills setup",
+    "Include_sound_end": "Include end of macro sound",
+    "Step_by_step_report": "Step by step report",
+    "Save_as_new": "Save as new (navigates to the newly created rotation)",
+    "Save_as_new_done": "You're now on a copy of your rotation",
+    "Change_rotation": "Change rotation",
+    "New_rotation_folder": "New folder",
     "CUSTOM": {
       "Recipe_configuration": "Recipe configuration",
       "Recipe_level": "Recipe level",
@@ -508,5 +542,9 @@
       "Access_wiki_content": "Navigate to the wiki page by clicking the link below. This page has some documentation for the general website usage, to guide you to make the most out of it and help you as much as possible",
       "Access_wiki_link": "Go to wiki page"
     }
+  },
+  "PRICING": {
+    "From_vendor": "Price from vendor",
+    "Materials_have_cost": "Materials for this craft have cost > 0, make sure you're not counting them twice"
   }
 }

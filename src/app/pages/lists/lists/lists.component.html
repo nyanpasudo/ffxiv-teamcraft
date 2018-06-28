@@ -24,8 +24,6 @@
     {{'LISTS.IMPORT.Title' | translate}}
 </button>
 
-<h3 class="mat-h3">{{'Lists' | translate}}</h3>
-
 <div class="filter">
     <mat-form-field>
         <mat-select (selectionChange)="tagFilter.next($event.value)"
@@ -44,7 +42,9 @@
     <mat-icon>call_merge</mat-icon>
 </button>
 
-<div class="lists-container" *ngIf="lists | async as display">
+<div *ngIf="lists | async as display">
+    <h2>{{'Lists' | translate}}</h2>
+    <mat-divider class="divider"></mat-divider>
     <div class="row" *ngFor="let list of display.basicLists;trackBy: trackByListsFn; let i = index; ">
         <app-list-panel
             [list]="list"
@@ -58,7 +58,31 @@
             [templateButton]="userData?.patron || userData?.admin"
         ></app-list-panel>
     </div>
-    <div class="shared-lists" *ngIf="sharedLists | async as sharedListsData">
+    <div class="category" *ngIf="display.publicLists !== undefined && display.publicLists.length > 0">
+        <h2>{{'Public_lists' | translate}}</h2>
+        <mat-divider class="divider"></mat-divider>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{'Public_lists' | translate}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="row" *ngFor="let list of display.publicLists;trackBy: trackByListsFn; let i = index;">
+                <app-list-panel
+                    [list]="list"
+                    [expanded]="expanded.indexOf(list.$key) > -1"
+                    (onrecipedelete)="removeRecipe($event, list, list.$key)"
+                    (onedit)="updateAmount($event.recipe, list, list.$key, $event.amount)"
+                    (ondelete)="delete(list)"
+                    [authorUid]="user.uid"
+                    [odd]="i%2>0"
+                    [linkButton]="userData?.patron || userData?.admin"
+                    [templateButton]="userData?.patron || userData?.admin"
+                ></app-list-panel>
+            </div>
+        </mat-expansion-panel>
+    </div>
+    <div class="category" *ngIf="sharedLists | async as sharedListsData">
         <div *ngIf="sharedListsData.length > 0">
             <h2>{{"LISTS.Shared_lists" | translate}}</h2>
             <mat-divider class="divider"></mat-divider>
@@ -77,7 +101,7 @@
             ></app-list-panel>
         </div>
     </div>
-    <div class="workshops">
+    <div class="category">
         <h2>{{'WORKSHOP.Workshops' | translate}}</h2>
         <mat-divider class="divider"></mat-divider>
         <div *ngFor="let workshop of workshops | async; trackBy: trackByWorkshopFn; let i = index" class="row">
@@ -141,7 +165,7 @@
                         [templateButton]="userData?.patron || userData?.admin"></app-list-panel>
                 </div>
                 <button mat-button class="full-width-button" color="accent"
-                        (click)="addListsToWorkhop(workshop, display.basicLists)">
+                        (click)="addListsToWorkhop(workshop, display.basicLists.concat(display.publicLists))">
                     <mat-icon>add</mat-icon>
                     {{'WORKSHOP.Add_lists' | translate}}
                 </button>
@@ -152,7 +176,7 @@
             {{'WORKSHOP.Add_workshop' | translate}}
         </button>
     </div>
-    <div class="workshops" *ngIf="sharedWorkshops | async as sharedWorkshopsData">
+    <div class="category" *ngIf="sharedWorkshops | async as sharedWorkshopsData">
         <div *ngIf="sharedWorkshopsData.length > 0">
             <h2>{{'WORKSHOP.Shared_workshops' | translate}}</h2>
             <mat-divider class="divider"></mat-divider>
@@ -216,7 +240,7 @@
                         [templateButton]="userData?.patron || userData?.admin"></app-list-panel>
                 </div>
                 <button mat-button class="full-width-button" color="accent"
-                        (click)="addListsToWorkhop(workshopData.workshop, display.basicLists)">
+                        (click)="addListsToWorkhop(workshopData.workshop, display.basicLists.concat(display.publicLists))">
                     <mat-icon>add</mat-icon>
                     {{'WORKSHOP.Add_lists' | translate}}
                 </button>

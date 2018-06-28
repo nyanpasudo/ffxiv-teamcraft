@@ -40,6 +40,12 @@ export class ActionComponent {
     @Input()
     cpCost: number;
 
+    @Input()
+    failed = false;
+
+    @Input()
+    tooltipDisabled = false;
+
     getJobId(): number {
         return this.simulation !== undefined ? this.simulation.crafterStats.jobId : this.jobId;
     }

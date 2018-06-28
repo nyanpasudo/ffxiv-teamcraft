@@ -28,6 +28,7 @@ import {Observable, Subscription} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, first, map} from 'rxjs/operators';
 import {PlatformService} from './core/tools/platform.service';
 import {IpcService} from './core/electron/ipc.service';
+import {GarlandToolsService} from './core/api/garland-tools.service';
 
 declare const ga: Function;
 
@@ -78,6 +79,8 @@ export class AppComponent implements OnInit {
 
     public openingUrl = false;
 
+    public overlayOpacity = 1;
+
     @ViewChild('urlBox')
     urlBox: ElementRef;
 
@@ -97,7 +100,10 @@ export class AppComponent implements OnInit {
                 public cd: ChangeDetectorRef,
                 private pendingChangesService: PendingChangesService,
                 public platformService: PlatformService,
-                private ipc: IpcService) {
+                private ipc: IpcService,
+                private gt: GarlandToolsService) {
+
+        this.gt.preload();
 
         settings.themeChange$.subscribe(change => {
             overlayContainer.getContainerElement().classList.remove(`${change.previous}-theme`);
@@ -129,6 +135,12 @@ export class AppComponent implements OnInit {
                 })
             ).subscribe((event: any) => {
             this.overlay = event.url.indexOf('?overlay') > -1;
+            if (this.overlay) {
+                this.ipc.on(`overlay:${this.ipc.overlayUri}:opacity`, (value) => {
+                    this.overlayOpacity = value;
+                });
+                this.ipc.send('overlay:get-opacity', {uri: this.ipc.overlayUri});
+            }
             ga('set', 'page', event.url);
             ga('send', 'pageview');
         });
@@ -330,6 +342,18 @@ export class AppComponent implements OnInit {
 
     minimize(): void {
         this.ipc.send('minimize');
+    }
+
+    setOverlayOpacity(opacity: number): void {
+        this.ipc.send('overlay:set-opacity', {uri: this.ipc.overlayUri, opacity: opacity});
+    }
+
+    previousPage(): void {
+        window.history.back();
+    }
+
+    nextPage(): void {
+        window.history.forward();
     }
 
 }

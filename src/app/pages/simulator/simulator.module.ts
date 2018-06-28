@@ -25,10 +25,12 @@ import {
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatMenuModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatTableModule,
     MatTooltipModule,
 } from '@angular/material';
 import {MacroPopupComponent} from './components/macro-popup/macro-popup.component';
@@ -39,6 +41,10 @@ import {SimulationMinStatsPopupComponent} from './components/simulation-min-stat
 import {ImportMacroPopupComponent} from './components/import-macro-popup/import-macro-popup.component';
 import {ConsumablesService} from './model/consumables.service';
 import {RotationNamePopupComponent} from './components/rotation-name-popup/rotation-name-popup.component';
+import {StepByStepReportPopupComponent} from './components/step-by-step-report-popup/step-by-step-report-popup.component';
+import {RecipeChoicePopupComponent} from './components/recipe-choice-popup/recipe-choice-popup.component';
+import {NewFolderPopupComponent} from './components/new-folder-popup/new-folder-popup.component';
+import {RotationPanelComponent} from './components/rotation-panel/rotation-panel.component';
 
 const routes: Routes = [
     {
@@ -53,6 +59,11 @@ const routes: Routes = [
     },
     {
         path: 'simulator/:itemId/:rotationId',
+        component: SimulatorPageComponent,
+        canActivate: [MaintenanceGuard]
+    },
+    {
+        path: 'simulator/:itemId/:recipeId/:rotationId',
         component: SimulatorPageComponent,
         canActivate: [MaintenanceGuard]
     },
@@ -91,6 +102,8 @@ const routes: Routes = [
         MatProgressSpinnerModule,
         MatDialogModule,
         MatSnackBarModule,
+        MatTableModule,
+        MatMenuModule,
 
         ClipboardModule,
 
@@ -111,14 +124,21 @@ const routes: Routes = [
         ImportMacroPopupComponent,
         MacroPopupComponent,
         SimulationMinStatsPopupComponent,
-        RotationNamePopupComponent
+        RotationNamePopupComponent,
+        StepByStepReportPopupComponent,
+        RecipeChoicePopupComponent,
+        NewFolderPopupComponent,
+        RotationPanelComponent
     ],
     entryComponents: [
         ImportRotationPopupComponent,
         ImportMacroPopupComponent,
         MacroPopupComponent,
         SimulationMinStatsPopupComponent,
-        RotationNamePopupComponent
+        RotationNamePopupComponent,
+        StepByStepReportPopupComponent,
+        RecipeChoicePopupComponent,
+        NewFolderPopupComponent
     ],
     providers: [
         CraftingActionsRegistry,

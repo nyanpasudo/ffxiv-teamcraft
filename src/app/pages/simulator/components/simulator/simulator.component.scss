@@ -3,6 +3,7 @@
     position: fixed;
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     transform: translateX(-145%);
     &.mobile {
         flex-direction: row;
@@ -21,6 +22,15 @@
     min-width: 50px;
     &.mobile {
         min-width: 30px;
+    }
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    > span {
+        white-space: nowrap;
+        margin-right: 10px;
     }
 }
 
@@ -223,6 +233,10 @@ mat-progress-bar {
 
 .drag-border {
     display: none !important;
+}
+
+.failed {
+    background-color: rgba(255, 0, 0, .3);
 }
 
 .actions {

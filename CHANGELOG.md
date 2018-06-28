@@ -2,6 +2,415 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.3"></a>
+## [4.2.3](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.2.1...v4.2.3) (2018-06-25)
+
+
+### Bug Fixes
+
+* fixed an issue with final crafts checking removing some ingredients ([1cd48bb](https://github.com/Supamiu/ffxiv-teamcraft/commit/1cd48bb)), closes [#420](https://github.com/Supamiu/ffxiv-teamcraft/issues/420)
+* **simulator:** tooltips are now hidden when dragging actions ([24042cd](https://github.com/Supamiu/ffxiv-teamcraft/commit/24042cd)), closes [#423](https://github.com/Supamiu/ffxiv-teamcraft/issues/423)
+* fixed an issue with ingredients amount not being set properly (again, fixed properly now) ([570279a](https://github.com/Supamiu/ffxiv-teamcraft/commit/570279a))
+
+
+### Features
+
+* apply stats to all crafts button ([19f8216](https://github.com/Supamiu/ffxiv-teamcraft/commit/19f8216)), closes [#418](https://github.com/Supamiu/ffxiv-teamcraft/issues/418)
+
+
+
+<a name="4.2.2"></a>
+## [4.2.2](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.2.1...v4.2.2) (2018-06-24)
+
+
+### Bug Fixes
+
+* fixed an issue with final crafts checking removing some ingredients ([1cd48bb](https://github.com/Supamiu/ffxiv-teamcraft/commit/1cd48bb)), closes [#420](https://github.com/Supamiu/ffxiv-teamcraft/issues/420)
+* **simulator:** tooltips are now hidden when dragging actions ([24042cd](https://github.com/Supamiu/ffxiv-teamcraft/commit/24042cd)), closes [#423](https://github.com/Supamiu/ffxiv-teamcraft/issues/423)
+
+
+### Features
+
+* apply stats to all crafts button ([19f8216](https://github.com/Supamiu/ffxiv-teamcraft/commit/19f8216)), closes [#418](https://github.com/Supamiu/ffxiv-teamcraft/issues/418)
+
+
+
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.2.0...v4.2.1) (2018-06-22)
+
+
+### Bug Fixes
+
+* fixed an undefined icon being displayed in total trades popup with gil ([b1cc8bd](https://github.com/Supamiu/ffxiv-teamcraft/commit/b1cc8bd))
+* no message on list not found ([0a9ebd3](https://github.com/Supamiu/ffxiv-teamcraft/commit/0a9ebd3)), closes [#412](https://github.com/Supamiu/ffxiv-teamcraft/issues/412)
+
+
+
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.8...v4.2.0) (2018-06-21)
+
+
+### Bug Fixes
+
+* fixed an issue with alarms not showing proper location ([9ada75d](https://github.com/Supamiu/ffxiv-teamcraft/commit/9ada75d)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* fixed an issue with gathering-location page not able to create alarm for Rhea ([fcfaed0](https://github.com/Supamiu/ffxiv-teamcraft/commit/fcfaed0))
+* fixed an issue with recipe amounts reduction not being applied to ingredients ([68804bb](https://github.com/Supamiu/ffxiv-teamcraft/commit/68804bb)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* **alarms:** fixed an issue with nodes despawning the day after the spawn ([95b8f0d](https://github.com/Supamiu/ffxiv-teamcraft/commit/95b8f0d))
+* **desktop:** auto update popup won't open duplicates anymore ([35b6e61](https://github.com/Supamiu/ffxiv-teamcraft/commit/35b6e61))
+* removed french translations inside the japanese file ([1a46064](https://github.com/Supamiu/ffxiv-teamcraft/commit/1a46064))
+* show list completion dialog only for author only ([b2a8425](https://github.com/Supamiu/ffxiv-teamcraft/commit/b2a8425))
+
+
+### Features
+
+* "recipes only" filter is now persistent accross the platform (not account-bound) ([65ec2a0](https://github.com/Supamiu/ffxiv-teamcraft/commit/65ec2a0))
+* added new checkboxes near recipe search results to add part of a result ([e407626](https://github.com/Supamiu/ffxiv-teamcraft/commit/e407626)), closes [#410](https://github.com/Supamiu/ffxiv-teamcraft/issues/410)
+* different color for odd rows in list panels ([355f538](https://github.com/Supamiu/ffxiv-teamcraft/commit/355f538))
+* new dialog box to show total cost of a list section (gils and trades) ([13b7eed](https://github.com/Supamiu/ffxiv-teamcraft/commit/13b7eed)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* you can now associate character using lodestoneId, useful for short names ([14a9d5f](https://github.com/Supamiu/ffxiv-teamcraft/commit/14a9d5f)), closes [#392](https://github.com/Supamiu/ffxiv-teamcraft/issues/392)
+* you can now choose in which group you create your alarms from lists ([6998eb4](https://github.com/Supamiu/ffxiv-teamcraft/commit/6998eb4))
+* **desktop:** added navigation arrows in topbar ([06635ee](https://github.com/Supamiu/ffxiv-teamcraft/commit/06635ee)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* **desktop:** new --multi (or -m) option to open multiple instances ([3575161](https://github.com/Supamiu/ffxiv-teamcraft/commit/3575161)), closes [#411](https://github.com/Supamiu/ffxiv-teamcraft/issues/411)
+* **desktop:** you can now set an opacity on overlay ([5df0290](https://github.com/Supamiu/ffxiv-teamcraft/commit/5df0290)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* **simulator:** it is now possible to create folders to organize rotations ([76261c5](https://github.com/Supamiu/ffxiv-teamcraft/commit/76261c5)), closes [#404](https://github.com/Supamiu/ffxiv-teamcraft/issues/404)
+* you can now customize echo notification in craft macros ([8a7d164](https://github.com/Supamiu/ffxiv-teamcraft/commit/8a7d164)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+* you can now see the job used for the craft in simulator result panel ([25deaa1](https://github.com/Supamiu/ffxiv-teamcraft/commit/25deaa1)), closes [#407](https://github.com/Supamiu/ffxiv-teamcraft/issues/407)
+
+
+
+<a name="4.1.8"></a>
+## [4.1.8](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.7...v4.1.8) (2018-06-09)
+
+
+### Bug Fixes
+
+* **desktop:** alarms overlay no longer shows muted groups ([b3a6900](https://github.com/Supamiu/ffxiv-teamcraft/commit/b3a6900))
+
+
+### Features
+
+* new /desktop page that redirects to github latest release ([581f278](https://github.com/Supamiu/ffxiv-teamcraft/commit/581f278))
+
+
+
+<a name="4.1.7"></a>
+## [4.1.7](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.6...v4.1.7) (2018-06-08)
+
+
+### Bug Fixes
+
+* dungeon and trial icons are now properly displayed ([7c8f7eb](https://github.com/Supamiu/ffxiv-teamcraft/commit/7c8f7eb)), closes [#400](https://github.com/Supamiu/ffxiv-teamcraft/issues/400)
+* fixed a critical which was breaking recipes search in production ([8ae4db8](https://github.com/Supamiu/ffxiv-teamcraft/commit/8ae4db8))
+* fixed an error with wrong amount in trade popup in some cases ([9cb553d](https://github.com/Supamiu/ffxiv-teamcraft/commit/9cb553d)), closes [#403](https://github.com/Supamiu/ffxiv-teamcraft/issues/403)
+* fixed an issue with simulator link on items that have multiple recipes ([059bc9f](https://github.com/Supamiu/ffxiv-teamcraft/commit/059bc9f)), closes [#401](https://github.com/Supamiu/ffxiv-teamcraft/issues/401)
+
+
+### Features
+
+* updated the /about page ([ccd6250](https://github.com/Supamiu/ffxiv-teamcraft/commit/ccd6250))
+
+
+
+<a name="4.1.6"></a>
+## [4.1.6](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.4...v4.1.6) (2018-06-06)
+
+
+### Bug Fixes
+
+* fixed a critical which was breaking recipes search in production ([8ae4db8](https://github.com/Supamiu/ffxiv-teamcraft/commit/8ae4db8))
+* only show recipe swap button if a rotation is set and pure (saved) ([36d77b2](https://github.com/Supamiu/ffxiv-teamcraft/commit/36d77b2))
+
+
+### Features
+
+* **desktop:** better flow for auto updater ([68ad385](https://github.com/Supamiu/ffxiv-teamcraft/commit/68ad385))
+
+
+
+<a name="4.1.5"></a>
+## [4.1.5](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.4...v4.1.5) (2018-06-06)
+
+
+### Bug Fixes
+
+* only show recipe swap button if a rotation is set and pure (saved) ([36d77b2](https://github.com/Supamiu/ffxiv-teamcraft/commit/36d77b2))
+
+
+### Features
+
+* **desktop:** better flow for auto updater ([68ad385](https://github.com/Supamiu/ffxiv-teamcraft/commit/68ad385))
+
+
+
+<a name="4.1.4"></a>
+## [4.1.4](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.3...v4.1.4) (2018-06-05)
+
+
+### Bug Fixes
+
+* fixed a missing translation in sidebar ([22d5e95](https://github.com/Supamiu/ffxiv-teamcraft/commit/22d5e95))
+
+
+### Features
+
+* **simulator:** crafter stats now shown in main panel, for easier screenshots ([9db17c9](https://github.com/Supamiu/ffxiv-teamcraft/commit/9db17c9))
+* you can now change recipe from the simulator page ([87a2a28](https://github.com/Supamiu/ffxiv-teamcraft/commit/87a2a28)), closes [#395](https://github.com/Supamiu/ffxiv-teamcraft/issues/395)
+
+
+
+<a name="4.1.3"></a>
+## [4.1.3](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.2...v4.1.3) (2018-06-04)
+
+
+### Bug Fixes
+
+* fixed an issue that prevented addition of some items ([d387ee3](https://github.com/Supamiu/ffxiv-teamcraft/commit/d387ee3)), closes [#396](https://github.com/Supamiu/ffxiv-teamcraft/issues/396)
+* no more sound spam with some items ([b65a44f](https://github.com/Supamiu/ffxiv-teamcraft/commit/b65a44f)), closes [#397](https://github.com/Supamiu/ffxiv-teamcraft/issues/397)
+
+
+### Features
+
+* new checkbox to search for recipes only in items search page ([9455a4e](https://github.com/Supamiu/ffxiv-teamcraft/commit/9455a4e))
+
+
+
+<a name="4.1.2"></a>
+## [4.1.2](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.1.0...v4.1.2) (2018-06-03)
+
+
+### Bug Fixes
+
+* fixed a bug that prevented alarms from playing ([5bf2273](https://github.com/Supamiu/ffxiv-teamcraft/commit/5bf2273))
+* fixed an issue with vendors extractor ([8c50f6c](https://github.com/Supamiu/ffxiv-teamcraft/commit/8c50f6c))
+
+
+
+<a name="4.1.1"></a>
+## [4.1.1](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.14...v4.1.1) (2018-06-03)
+
+
+### Bug Fixes
+
+* fixed an issue with vendors extractor ([8c50f6c](https://github.com/Supamiu/ffxiv-teamcraft/commit/8c50f6c))
+* ordering by job no longer hides non-recipe items ([ea27201](https://github.com/Supamiu/ffxiv-teamcraft/commit/ea27201))
+
+
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.14...v4.1.0) (2018-06-03)
+
+
+### Bug Fixes
+
+* **alarms:** you can now properly change sound, delay and volume of your alarms ([6ce2a37](https://github.com/Supamiu/ffxiv-teamcraft/commit/6ce2a37))
+* change email popup is now loading properly ([39a877a](https://github.com/Supamiu/ffxiv-teamcraft/commit/39a877a)), closes [#387](https://github.com/Supamiu/ffxiv-teamcraft/issues/387)
+* completion dialog is no longer shown for public lists ([1c55018](https://github.com/Supamiu/ffxiv-teamcraft/commit/1c55018))
+* fixed an error with crafts yielding more than one item ([f772456](https://github.com/Supamiu/ffxiv-teamcraft/commit/f772456))
+* fixed an issue that was preventing to add community lists in a workshop ([769c06d](https://github.com/Supamiu/ffxiv-teamcraft/commit/769c06d))
+* navigation map no longer takes completed items into account ([fb765dd](https://github.com/Supamiu/ffxiv-teamcraft/commit/fb765dd))
+
+
+### Features
+
+* **desktop:** you can now use custom sounds as alarm ([e647689](https://github.com/Supamiu/ffxiv-teamcraft/commit/e647689)), closes [#350](https://github.com/Supamiu/ffxiv-teamcraft/issues/350)
+* **simulator:** rotation name is suffixed by "*" if there's some unsaved changes ([527f60c](https://github.com/Supamiu/ffxiv-teamcraft/commit/527f60c))
+* **simulator:** you can now change the current rotation inside simulator ([21af5d6](https://github.com/Supamiu/ffxiv-teamcraft/commit/21af5d6)), closes [#389](https://github.com/Supamiu/ffxiv-teamcraft/issues/389)
+* added the icon of the item in alarms overlay view ([6048ef0](https://github.com/Supamiu/ffxiv-teamcraft/commit/6048ef0))
+* control is now properly handled in min stats popup ([dadf1bf](https://github.com/Supamiu/ffxiv-teamcraft/commit/dadf1bf))
+* new "Copy as text" button to copy a panel or the whole list as text ([3d9aebb](https://github.com/Supamiu/ffxiv-teamcraft/commit/3d9aebb)), closes [#342](https://github.com/Supamiu/ffxiv-teamcraft/issues/342)
+* you can now add almost any item in the game to a list, even if it's not craftable ([fe72840](https://github.com/Supamiu/ffxiv-teamcraft/commit/fe72840)), closes [#336](https://github.com/Supamiu/ffxiv-teamcraft/issues/336)
+* you can now organize alarms on groups, mute them by group and reorder using drag & drop ([1017091](https://github.com/Supamiu/ffxiv-teamcraft/commit/1017091)), closes [#366](https://github.com/Supamiu/ffxiv-teamcraft/issues/366)
+
+
+
+<a name="4.0.14"></a>
+## [4.0.14](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.13...v4.0.14) (2018-05-31)
+
+
+### Performance Improvements
+
+* **list:** huge performance improvement on lists regeneration ([90feec1](https://github.com/Supamiu/ffxiv-teamcraft/commit/90feec1))
+
+
+
+<a name="4.0.13"></a>
+## [4.0.13](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.12...v4.0.13) (2018-05-30)
+
+
+### Bug Fixes
+
+* custom links popup now creates links properly ([ef547c7](https://github.com/Supamiu/ffxiv-teamcraft/commit/ef547c7)), closes [#385](https://github.com/Supamiu/ffxiv-teamcraft/issues/385)
+* **simulator:** fixed an issue with Innovative Touch not decreasing durability ([7220dcc](https://github.com/Supamiu/ffxiv-teamcraft/commit/7220dcc)), closes [#386](https://github.com/Supamiu/ffxiv-teamcraft/issues/386)
+
+
+### Features
+
+* **desktop:** way better window state management (position and size saving properly) ([373cafd](https://github.com/Supamiu/ffxiv-teamcraft/commit/373cafd))
+* **simulator:** you can now see & edit rotation name inside simulator ([0d7d435](https://github.com/Supamiu/ffxiv-teamcraft/commit/0d7d435)), closes [#380](https://github.com/Supamiu/ffxiv-teamcraft/issues/380)
+* current list shown inside bulk regeneration popup ([c4577b4](https://github.com/Supamiu/ffxiv-teamcraft/commit/c4577b4)), closes [#384](https://github.com/Supamiu/ffxiv-teamcraft/issues/384)
+* new button to copy macro fragments to clipboard ([1f4e9cc](https://github.com/Supamiu/ffxiv-teamcraft/commit/1f4e9cc)), closes [#382](https://github.com/Supamiu/ffxiv-teamcraft/issues/382)
+
+
+
+<a name="4.0.12"></a>
+## [4.0.12](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.11...v4.0.12) (2018-05-29)
+
+
+### Bug Fixes
+
+* fixed an issue with custom layouts panel sometimes broken ([a9a2868](https://github.com/Supamiu/ffxiv-teamcraft/commit/a9a2868))
+* fixed an issue with masterbooks popup in profile page ([83dee12](https://github.com/Supamiu/ffxiv-teamcraft/commit/83dee12))
+* fixed an issue with precrafts inside pricing view ([768093b](https://github.com/Supamiu/ffxiv-teamcraft/commit/768093b))
+* fixed an issue with pricing view not computing benefits properly ([e3b3459](https://github.com/Supamiu/ffxiv-teamcraft/commit/e3b3459))
+* fixed an issue with reduction details popup freezing the app ([6865b77](https://github.com/Supamiu/ffxiv-teamcraft/commit/6865b77)), closes [#383](https://github.com/Supamiu/ffxiv-teamcraft/issues/383)
+
+
+
+<a name="4.0.11"></a>
+## [4.0.11](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.10...v4.0.11) (2018-05-29)
+
+
+### Bug Fixes
+
+* fixed an issue with gathering search in some languages (pt, es) ([dbbdc19](https://github.com/Supamiu/ffxiv-teamcraft/commit/dbbdc19))
+* fixed an issue with pricing mode showing wrong values for precrafts ([11272b5](https://github.com/Supamiu/ffxiv-teamcraft/commit/11272b5))
+
+
+### Features
+
+* tags button now present inside list panel header ([e442cf9](https://github.com/Supamiu/ffxiv-teamcraft/commit/e442cf9))
+
+
+
+<a name="4.0.10"></a>
+## [4.0.10](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.9...v4.0.10) (2018-05-28)
+
+
+### Bug Fixes
+
+* **simulator:** fixed a bug with new rotation save ([ce3e091](https://github.com/Supamiu/ffxiv-teamcraft/commit/ce3e091))
+
+
+
+<a name="4.0.9"></a>
+## [4.0.9](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.8...v4.0.9) (2018-05-28)
+
+
+### Bug Fixes
+
+* layout order by job is no longer flickering ([4c6755b](https://github.com/Supamiu/ffxiv-teamcraft/commit/4c6755b))
+* removed reset set button in simulator ([73acaea](https://github.com/Supamiu/ffxiv-teamcraft/commit/73acaea))
+* **alarms:** fixed a bug with items search and their seeds (old world fig, etc) ([353a92a](https://github.com/Supamiu/ffxiv-teamcraft/commit/353a92a))
+* **mobile:** fixed list panel buttons layout, they're now in the panel content ([fdfd2ed](https://github.com/Supamiu/ffxiv-teamcraft/commit/fdfd2ed)), closes [#360](https://github.com/Supamiu/ffxiv-teamcraft/issues/360)
+* **simulator:** fixed a bug that was making simulation action costs hidden ([07576c9](https://github.com/Supamiu/ffxiv-teamcraft/commit/07576c9))
+* **simulator:** tooltip now hidden upon drag ([2febfa2](https://github.com/Supamiu/ffxiv-teamcraft/commit/2febfa2))
+
+
+### Features
+
+* **simulator:** new "Save as new" button on rotations, creates a clone of the current rotation ([03d0548](https://github.com/Supamiu/ffxiv-teamcraft/commit/03d0548))
+
+
+### Performance Improvements
+
+* performance improvements for community lists ([55e3573](https://github.com/Supamiu/ffxiv-teamcraft/commit/55e3573))
+
+
+
+<a name="4.0.8"></a>
+## [4.0.8](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.7...v4.0.8) (2018-05-26)
+
+
+### Bug Fixes
+
+* fixes missing linebreaks when copying macro from firefox ([a571ef6](https://github.com/Supamiu/ffxiv-teamcraft/commit/a571ef6))
+* **simulator:** better report amounts for step by step report ([2b29f97](https://github.com/Supamiu/ffxiv-teamcraft/commit/2b29f97))
+* **simulator:** brand/name actions no longer taken as cross class action ([ceca859](https://github.com/Supamiu/ffxiv-teamcraft/commit/ceca859)), closes [#373](https://github.com/Supamiu/ffxiv-teamcraft/issues/373)
+* **simulator:** fixed an issue with Specialty: Refurbish ([7432a9a](https://github.com/Supamiu/ffxiv-teamcraft/commit/7432a9a)), closes [#371](https://github.com/Supamiu/ffxiv-teamcraft/issues/371)
+
+
+### Features
+
+* **layout:** you can now order by job in layout panels ([283f01d](https://github.com/Supamiu/ffxiv-teamcraft/commit/283f01d))
+* **simulator:** added audio signal for end of cross class setup ([f868827](https://github.com/Supamiu/ffxiv-teamcraft/commit/f868827)), closes [#373](https://github.com/Supamiu/ffxiv-teamcraft/issues/373)
+
+
+
+<a name="4.0.7"></a>
+## [4.0.7](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.6...v4.0.7) (2018-05-25)
+
+
+### Bug Fixes
+
+* better auto-update flow for "all users" installation ([f2b6462](https://github.com/Supamiu/ffxiv-teamcraft/commit/f2b6462)), closes [#359](https://github.com/Supamiu/ffxiv-teamcraft/issues/359)
+* crafting rotations no longer reappearing out of nowhere ([3e09500](https://github.com/Supamiu/ffxiv-teamcraft/commit/3e09500)), closes [#355](https://github.com/Supamiu/ffxiv-teamcraft/issues/355)
+* **simulator:** custom stats now save properly ([fdfb4c6](https://github.com/Supamiu/ffxiv-teamcraft/commit/fdfb4c6)), closes [#365](https://github.com/Supamiu/ffxiv-teamcraft/issues/365)
+* **simulator:** way better design for failed actions, thanks to Aurora Phoenix ([3f7bcad](https://github.com/Supamiu/ffxiv-teamcraft/commit/3f7bcad))
+* fixed an issue with shared lists not being visible ([f6eca9f](https://github.com/Supamiu/ffxiv-teamcraft/commit/f6eca9f))
+* multi-crafter items now using correct stats in simulator ([fe9f0f1](https://github.com/Supamiu/ffxiv-teamcraft/commit/fe9f0f1)), closes [#361](https://github.com/Supamiu/ffxiv-teamcraft/issues/361)
+* no more duplicated tags in lists ([461cdad](https://github.com/Supamiu/ffxiv-teamcraft/commit/461cdad)), closes [#357](https://github.com/Supamiu/ffxiv-teamcraft/issues/357)
+* rotations name generation now properly done (not retroactive) ([adf4c8f](https://github.com/Supamiu/ffxiv-teamcraft/commit/adf4c8f))
+* rotations now save/copy properly, no more lost rotations ! ([6797621](https://github.com/Supamiu/ffxiv-teamcraft/commit/6797621)), closes [#363](https://github.com/Supamiu/ffxiv-teamcraft/issues/363)
+* you can no longer add an empty id as contact ([6e074e4](https://github.com/Supamiu/ffxiv-teamcraft/commit/6e074e4)), closes [#358](https://github.com/Supamiu/ffxiv-teamcraft/issues/358)
+
+
+### Features
+
+* added timers for duskglow aethersand in alarms page ([c9ceb8a](https://github.com/Supamiu/ffxiv-teamcraft/commit/c9ceb8a))
+* **simulator:** added possibility to have end of macro sound ([d521342](https://github.com/Supamiu/ffxiv-teamcraft/commit/d521342))
+* **simulator:** generated macro now includes /aaction setup ([ea71447](https://github.com/Supamiu/ffxiv-teamcraft/commit/ea71447)), closes [#368](https://github.com/Supamiu/ffxiv-teamcraft/issues/368)
+* alarms page now adds all spawns of an item at once ([4536352](https://github.com/Supamiu/ffxiv-teamcraft/commit/4536352))
+* default layout is now the one made by tataru taru ! ([6188914](https://github.com/Supamiu/ffxiv-teamcraft/commit/6188914))
+* new collapsible panel in lists for community lists ([3d7f2d6](https://github.com/Supamiu/ffxiv-teamcraft/commit/3d7f2d6))
+* **simulator:** new step by step report popup ([9095c3d](https://github.com/Supamiu/ffxiv-teamcraft/commit/9095c3d)), closes [#364](https://github.com/Supamiu/ffxiv-teamcraft/issues/364)
+
+
+
+<a name="4.0.6"></a>
+## [4.0.6](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.5...v4.0.6) (2018-05-24)
+
+
+### Bug Fixes
+
+* better auto-update flow for "all users" installation ([f2b6462](https://github.com/Supamiu/ffxiv-teamcraft/commit/f2b6462)), closes [#359](https://github.com/Supamiu/ffxiv-teamcraft/issues/359)
+* crafting rotations no longer reappearing out of nowhere ([3e09500](https://github.com/Supamiu/ffxiv-teamcraft/commit/3e09500)), closes [#355](https://github.com/Supamiu/ffxiv-teamcraft/issues/355)
+* multi-crafter items now using correct stats in simulator ([fe9f0f1](https://github.com/Supamiu/ffxiv-teamcraft/commit/fe9f0f1)), closes [#361](https://github.com/Supamiu/ffxiv-teamcraft/issues/361)
+* no more duplicated tags in lists ([461cdad](https://github.com/Supamiu/ffxiv-teamcraft/commit/461cdad)), closes [#357](https://github.com/Supamiu/ffxiv-teamcraft/issues/357)
+* rotations name generation now properly done (not retroactive) ([adf4c8f](https://github.com/Supamiu/ffxiv-teamcraft/commit/adf4c8f))
+* rotations now save/copy properly, no more lost rotations ! ([6797621](https://github.com/Supamiu/ffxiv-teamcraft/commit/6797621)), closes [#363](https://github.com/Supamiu/ffxiv-teamcraft/issues/363)
+* you can no longer add an empty id as contact ([6e074e4](https://github.com/Supamiu/ffxiv-teamcraft/commit/6e074e4)), closes [#358](https://github.com/Supamiu/ffxiv-teamcraft/issues/358)
+
+
+### Features
+
+* added 4.3 currencies ([#356](https://github.com/Supamiu/ffxiv-teamcraft/issues/356)) ([155dfd7](https://github.com/Supamiu/ffxiv-teamcraft/commit/155dfd7))
+* added timers for duskglow aethersand in alarms page ([c9ceb8a](https://github.com/Supamiu/ffxiv-teamcraft/commit/c9ceb8a))
+* new collapsible panel in lists for community lists ([3d7f2d6](https://github.com/Supamiu/ffxiv-teamcraft/commit/3d7f2d6))
+
+
+
+<a name="4.0.5"></a>
+## [4.0.5](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.4...v4.0.5) (2018-05-23)
+
+
+### Bug Fixes
+
+* **desktop:** only one instance can run at a given time now ([6860273](https://github.com/Supamiu/ffxiv-teamcraft/commit/6860273)), closes [#353](https://github.com/Supamiu/ffxiv-teamcraft/issues/353)
+* **simulator:** consumables are now order by name, hq first ([fc17369](https://github.com/Supamiu/ffxiv-teamcraft/commit/fc17369))
+* facebook oauth (mainly config on fb side) ([d7628b9](https://github.com/Supamiu/ffxiv-teamcraft/commit/d7628b9))
+* **simulator:** fixed a bug with rotations being renamed upon saving ([c2b8c96](https://github.com/Supamiu/ffxiv-teamcraft/commit/c2b8c96))
+
+
+
+<a name="4.0.4"></a>
+## [4.0.4](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.3...v4.0.4) (2018-05-22)
+
+
+### Features
+
+* new foods added to simulator ([0a18197](https://github.com/Supamiu/ffxiv-teamcraft/commit/0a18197))
+
+
+
 <a name="4.0.3"></a>
 ## [4.0.3](https://github.com/Supamiu/ffxiv-teamcraft/compare/v4.0.1...v4.0.3) (2018-05-22)
 

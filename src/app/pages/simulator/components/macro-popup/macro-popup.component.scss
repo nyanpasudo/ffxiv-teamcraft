@@ -1,4 +1,20 @@
-.macro-fragment {
-    display: flex;
-    flex-direction: column;
+.content {
+    padding-top: 15px;
+    .config {
+        display: flex;
+        flex-direction: column;
+    }
+    .macro-fragment {
+        display: flex;
+        flex-direction: column;
+        background: rgba(0, 0, 0, .1);
+        border: 1px solid darkgrey;
+        padding: 20px;
+        position: relative;
+        .copy-macro {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
 }

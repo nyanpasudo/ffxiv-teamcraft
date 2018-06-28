@@ -1,6 +1,7 @@
 <!--Layout for desktop browsers-->
 <mat-list-item *ngIf="!(isMobile | async); else mobileLayout"
-               [ngClass]="{'even': even, 'auto-height':true, 'compact':settings.compactLists}">
+               [ngClass]="{'even': even, 'auto-height':true, 'compact':settings.compactLists,
+               'done-row': item.done >= item.amount, 'craftable-row': canBeCrafted}">
     <div class="item-col-left">
         <div matListAvatar [ngClass]="{'icon':true, 'compact': settings.compactLists}"
              [appXivdbTooltip]="item.id" [appXivdbTooltipDisabled]="isDraft()">
@@ -14,7 +15,7 @@
              mat-icon-button ngxClipboard [cbContent]="item.id | itemName | i18n"
              (cbOnSuccess)="afterNameCopy(item.id)">
             <span
-                [ngClass]="{'strike': item.done >= item.amount, 'compact': settings.compactLists, 'craftable': canBeCrafted}">
+                [ngClass]="{'compact': settings.compactLists}">
                 {{item.id | itemName | i18n}}
             </span>
         </div>
@@ -71,13 +72,29 @@
     <div *ngIf="hasTimers" class="timers-container">
         <div [ngClass]="{'timer':true, 'compact': settings.compactLists}"
              *ngFor="let timer of timers | async; trackBy: trackByTimers">
+            <mat-menu #addAlarmMenu="matMenu">
+                <button (click)="addAlarm(timer.itemId, timer.type, group.name)" mat-menu-item
+                        *ngFor="let group of user.alarmGroups">{{group.name}}
+                </button>
+            </mat-menu>
             <button mat-raised-button
+                    *ngIf="!hasAlarm[timer.itemId]"
+                    [matMenuTriggerFor]="addAlarmMenu"
                     [color]="getTimerColor(timer.alarm) | async"
-                    (click)="toggleAlarm(timer.itemId, timer.type)"
                     matTooltip="{{timer?.zoneId | placeName | i18n}} - {{timer?.areaId | placeName | i18n}}"
                     matTooltipPosition="above">
-                <mat-icon *ngIf="!hasAlarm[timer.itemId]">alarm_add</mat-icon>
-                <mat-icon *ngIf="hasAlarm[timer.itemId]">alarm_on</mat-icon>
+                <mat-icon>alarm_add</mat-icon>
+                {{timer?.display}} <span *ngIf="timer?.slot as slot">({{slot}})</span>
+                <img src="{{getTimerIcon(timer.type)}}" alt="" class="type-icon" *ngIf="timer.type > -1">
+            </button>
+
+            <button mat-raised-button
+                    *ngIf="hasAlarm[timer.itemId]"
+                    (click)="removeAlarm(timer.itemId)"
+                    [color]="getTimerColor(timer.alarm) | async"
+                    matTooltip="{{timer?.zoneId | placeName | i18n}} - {{timer?.areaId | placeName | i18n}}"
+                    matTooltipPosition="above">
+                <mat-icon>alarm_on</mat-icon>
                 {{timer?.display}} <span *ngIf="timer?.slot as slot">({{slot}})</span>
                 <img src="{{getTimerIcon(timer.type)}}" alt="" class="type-icon" *ngIf="timer.type > -1">
             </button>
@@ -176,7 +193,8 @@
                         {{'SIMULATOR.Open_in_external' | translate: {name: 'ryan20340'} }}
                     </a>
                 </mat-menu>
-                <button mat-icon-button class="crafter-button" [matMenuTriggerFor]="simulatorMenu" *ngIf="getCraft(item.recipeId) as craft">
+                <button mat-icon-button class="crafter-button" [matMenuTriggerFor]="simulatorMenu"
+                        *ngIf="getCraft(item.recipeId) as craft">
                     <img [ngClass]="{'crafted-by':true, 'compact': settings.compactLists}"
                          src="{{craft.icon}}">
                     <span class="crafter-level">{{craft.level}} {{craft.stars_tooltip}}</span>
@@ -185,12 +203,14 @@
             <div *ngIf="!recipe">
                 <div *ngFor="let craft of item.craftedBy">
                     <mat-menu #simulatorMenu="matMenu">
-                        <button mat-menu-item routerLink="/simulator/{{item.id}}">{{'SIMULATOR.New_rotation' |
+                        <button mat-menu-item routerLink="/simulator/{{item.id}}/{{craft.recipeId}}">
+                            {{'SIMULATOR.New_rotation' |
                             translate}}
                         </button>
                         <button mat-menu-item
                                 *ngFor="let rotation of rotations$ | async"
-                                routerLink="/simulator/{{item.id}}/{{rotation.$key}}">{{rotation.getName()}}
+                                routerLink="/simulator/{{item.id}}/{{craft.recipeId}}/{{rotation.$key}}">
+                            {{rotation.getName()}}
                         </button>
                         <mat-divider></mat-divider>
                         <a href="{{craft | simulatorLink:'http://ffxiv-beta.lokyst.net' | i18n}}"
@@ -253,9 +273,9 @@
             <div *ngIf="item.instances !== undefined && item.instances.length > 0">
                 <button mat-icon-button [ngClass]="{'icon-button':true, 'compact': settings.compactLists}"
                         (click)="openInstancesDetails(item)">
-                    <img matTooltip="{{getI18n(item.instances[0].type)}}"
+                    <img matTooltip="{{item.instances[0].name | i18n}}"
                          matTooltipPosition="above"
-                         src="https://www.garlandtools.org/db/images/{{getI18n(item.instances[0].type)}}.png"
+                         [src]="item.instances[0].icon | instanceIcon"
                          [ngClass]="{'currency':true, 'compact': settings.compactLists}">
                 </button>
             </div>
@@ -320,7 +340,7 @@
             <span class="yield" *ngIf="item.yield > 1">x{{item.yield}}</span>
         </div>
         <div class="item-name" matLine>
-            <span [ngClass]="{'strike':item.done >= item.amount, 'craftable': canBeCrafted}" matTooltipPosition="above"
+            <span matTooltipPosition="above"
                   matTooltip="{{'Copy_item_name_to_clipboard' | translate}}"
                   mat-icon-button ngxClipboard [cbContent]="item.id | itemName | i18n"
                   (cbOnSuccess)="afterNameCopy(item.id)">{{item.id | itemName | i18n}}</span>
@@ -363,11 +383,13 @@
             <div class="classes">
                 <div *ngIf="recipe">
                     <mat-menu #simulatorMenu="matMenu">
-                        <button mat-menu-item routerLink="/simulator/{{item.id}}">{{'SIMULATOR.New_rotation' | translate}}
+                        <button mat-menu-item routerLink="/simulator/{{item.id}}/{{item.recipeId}}">
+                            {{'SIMULATOR.New_rotation' | translate}}
                         </button>
                         <button mat-menu-item
                                 *ngFor="let rotation of rotations$ | async"
-                                routerLink="/simulator/{{item.id}}/{{rotation.$key}}">{{rotation.getName()}}
+                                routerLink="/simulator/{{item.id}}/{{item.recipeId}}/{{rotation.$key}}">
+                            {{rotation.getName()}}
                         </button>
                         <mat-divider></mat-divider>
                         <a *ngIf="getCraft(item.recipeId) as craft"
@@ -389,7 +411,8 @@
                             {{'SIMULATOR.Open_in_external' | translate: {name: 'ryan20340'} }}
                         </a>
                     </mat-menu>
-                    <button mat-icon-button [matMenuTriggerFor]="simulatorMenu" *ngIf="getCraft(item.recipeId) as craft" class="crafter-button">
+                    <button mat-icon-button [matMenuTriggerFor]="simulatorMenu" *ngIf="getCraft(item.recipeId) as craft"
+                            class="crafter-button">
                         <img [ngClass]="{'crafted-by':true}" src="{{craft.icon}}">
                         <span class="crafter-level">{{craft.level}} {{craft.stars_tooltip}}</span>
                     </button>
@@ -397,12 +420,14 @@
                 <div *ngIf="!recipe">
                     <div *ngFor="let craft of item.craftedBy">
                         <mat-menu #simulatorMenu="matMenu">
-                            <button mat-menu-item routerLink="/simulator/{{item.id}}">{{'SIMULATOR.New_rotation' |
+                            <button mat-menu-item routerLink="/simulator/{{item.id}}/{{craft.recipeId}}">
+                                {{'SIMULATOR.New_rotation' |
                                 translate}}
                             </button>
                             <button mat-menu-item
                                     *ngFor="let rotation of rotations$ | async"
-                                    routerLink="/simulator/{{item.id}}/{{rotation.$key}}">{{rotation.getName()}}
+                                    routerLink="/simulator/{{item.id}}/{{craft.recipeId}}/{{rotation.$key}}">
+                                {{rotation.getName()}}
                             </button>
                             <mat-divider></mat-divider>
                             <a href="{{craft | simulatorLink:'http://ffxiv-beta.lokyst.net' | i18n}}"
@@ -457,9 +482,9 @@
                 </div>
                 <div *ngIf="item.instances !== undefined && item.instances.length > 0">
                     <button mat-icon-button (click)="openInstancesDetails(item)">
-                        <img matTooltip="{{getI18n(item.instances[0].type)}}"
+                        <img matTooltip="{{item.instances[0].name | i18n}}"
                              matTooltipPosition="above"
-                             src="https://www.garlandtools.org/db/images/{{getI18n(item.instances[0].type)}}.png"
+                             [src]="item.instances[0].icon | instanceIcon"
                              class="currency">
                     </button>
                 </div>

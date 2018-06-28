@@ -1,48 +1,58 @@
-const {app, ipcMain, BrowserWindow, Tray, nativeImage} = require('electron');
+const {app, ipcMain, BrowserWindow, Tray, nativeImage, dialog} = require('electron');
 const {autoUpdater} = require('electron-updater');
-const open = require('open');
 const path = require('path');
-const windowStateKeeper = require('electron-window-state');
+const Config = require('electron-config');
+const config = new Config();
 
 const electronOauth2 = require('electron-oauth2');
 
-let win, serve;
-const args = process.argv.slice(1);
-serve = args.some(val => val === '--serve');
+const argv = process.argv.slice(1);
 
-if (serve) {
-    require('electron-reload')(__dirname, {});
-}
-
+let win;
 let tray;
 let nativeIcon;
 
+let updateInterval;
+
 let openedOverlays = {};
 
-function createWindow() {
+const options = {
+    multi: false
+};
 
-    // Load the previous state with fallback to defaults
-    let mainWindowState = windowStateKeeper({
-        id: 'main',
-        defaultWidth: 1280,
-        defaultHeight: 720
+for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--multi' || argv[i] === '-m') {
+        options.multi = true;
+    }
+}
+
+if (!options.multi) {
+    const shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+        // Someone tried to run a second instance, we should focus our window.
+        if (win && !options.multi) {
+            if (win.isMinimized()) win.restore();
+            win.focus();
+        }
     });
 
-    // Create the window using the state information
-    win = new BrowserWindow({
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
+    if (shouldQuit) {
+        app.quit();
+        return;
+    }
+}
+
+function createWindow() {
+    let opts = {
+        show: false,
         backgroundColor: '#ffffff',
         frame: false,
         icon: `file://${__dirname}/dist/assets/logo.png`
-    });
-
-    // Let us register listeners on the window, so we can update the state
-    // automatically (the listeners will be removed when the window is closed)
-    // and restore the maximized or full screen state
-    mainWindowState.manage(win);
+    };
+    Object.assign(opts, config.get('win:bounds'));
+    win = new BrowserWindow(opts);
+    if (config.get('win:fullscreen')) {
+        win.maximize();
+    }
 
     win.loadURL(`file://${__dirname}/dist/index.html`);
 
@@ -54,13 +64,27 @@ function createWindow() {
         win = null
     });
 
+    win.once('ready-to-show', () => {
+        win.show();
+        autoUpdater.checkForUpdates();
+        updateInterval = setInterval(() => {
+            autoUpdater.checkForUpdates();
+        }, 300000);
+    });
+
+    // save window size and position
+    win.on('close', () => {
+        config.set('win:bounds', win.getBounds());
+        config.set('win:fullscreen', win.isMaximized());
+    });
+
     const iconPath = path.join(__dirname, 'dist', 'assets', 'logo.png');
     nativeIcon = nativeImage.createFromPath(iconPath);
     const trayIcon = nativeIcon.resize({width: 16, height: 16});
     tray = new Tray(trayIcon);
 
     const handleRedirect = (e, url) => {
-        if(url !== win.webContents.getURL()) {
+        if (url !== win.webContents.getURL()) {
             e.preventDefault();
             require('electron').shell.openExternal(url);
         }
@@ -81,13 +105,10 @@ function createWindow() {
     tray.on('balloon-click', () => {
         !win.isVisible() ? win.show() : null;
     });
-
-    autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Create window on electron intialization
 app.on('ready', () => {
-    autoUpdater.checkForUpdatesAndNotify();
     createWindow();
 });
 
@@ -105,6 +126,20 @@ app.on('activate', function () {
     if (win === null) {
         createWindow()
     }
+});
+
+autoUpdater.on('update-downloaded', () => {
+    clearInterval(updateInterval);
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'FFXIV Teamcraft - Update available',
+        message: 'An update is available and downloaded, install now?',
+        buttons: ['Yes', 'No']
+    }, (buttonIndex) => {
+        if (buttonIndex === 0) {
+            autoUpdater.quitAndInstall();
+        }
+    });
 });
 
 const googleOauthConfig = {
@@ -160,33 +195,49 @@ ipcMain.on('notification', (event, config) => {
     tray.displayBalloon(config);
 });
 
-ipcMain.on('overlay', (event, url) => {
-    let overlayWindowState = windowStateKeeper({
-        id: url,
-        defaultWidth: 280,
-        defaultHeight: 400
-    });
+ipcMain.on('run-update', () => {
+    autoUpdater.quitAndInstall();
+});
 
-    // Create the window using the state information
-    const overlayWindowConfig = {
-        height: overlayWindowState.height,
-        width: overlayWindowState.width,
-        x: overlayWindowState.x,
-        y: overlayWindowState.y,
+ipcMain.on('overlay', (event, url) => {
+    let opts = {
+        show: false,
         resizable: true,
         frame: false,
         alwaysOnTop: true,
-        autoHideMenuBar: true,
-        webPreferences: {
-            nodeIntegration: false
-        }
+        autoHideMenuBar: true
     };
+    Object.assign(opts, config.get(`overlay:${url}:bounds`));
+    opts.opacity = config.get(`overlay:${url}:opacity`) || 1;
+    const overlay = new BrowserWindow(opts);
 
-    const overlay = new BrowserWindow(overlayWindowConfig);
+    overlay.once('ready-to-show', () => {
+        overlay.show();
+    });
+
+    // save window size and position
+    overlay.on('close', () => {
+        config.set(`overlay:${url}:bounds`, overlay.getBounds());
+        config.set(`overlay:${url}:opacity`, overlay.getOpacity());
+    });
+
+
     overlay.loadURL(`file://${__dirname}/dist/index.html#${url}?overlay=true`);
     openedOverlays[url] = overlay;
+});
 
-    overlayWindowState.manage(overlay);
+ipcMain.on('overlay:set-opacity', (event, data) => {
+    const overlayWindow = openedOverlays[data.uri];
+    if (overlayWindow !== undefined) {
+        overlayWindow.setOpacity(data.opacity);
+    }
+});
+
+ipcMain.on('overlay:get-opacity', (event, data) => {
+    const overlayWindow = openedOverlays[data.uri];
+    if (overlayWindow !== undefined) {
+        event.sender.send(`overlay:${data.uri}:opacity`, overlayWindow.getOpacity());
+    }
 });
 
 ipcMain.on('overlay-close', (event, url) => {

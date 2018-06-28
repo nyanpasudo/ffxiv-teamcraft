@@ -1,4 +1,10 @@
 {
+  "ITEMS": {
+    "Title": "Gegenstände",
+    "No_match": "Keine passenden Gegenstände",
+    "Item_name": "Name des Gegenstands",
+    "Only_recipes": "Nur Rezepte"
+  },
   "Download_desktop_app": "Desktopanwendung herunterladen",
   "Delete": "Löschen",
   "Timers": "Timers",
@@ -74,15 +80,12 @@
   "New_List": "Neue Liste",
   "Please_enter_a_name": "Bitte gib einen Namen ein",
   "Lists": "Liste",
-  "Recipes": "Rezepte",
   "items": "Gegenstände",
   "Confirm": "Bestätigen",
-  "Cancel": "abbrechen",
+  "Cancel": "Abbrechen",
   "Edit": "bearbeiten",
   "Add_a_list": "Eine Liste hinzufügen",
   "List_name": "Listenname",
-  "Recipe_name": "Rezeptname",
-  "No_matching_recipe": "Kein passendes Rezept",
   "Reset_progression": "Fortschritt zurücksetzen",
   "Gardening": "Haus/Wohnungs-Gärtnerei",
   "Hunting": "Monsterjagd",
@@ -203,6 +206,7 @@
     "Patreon_email": "Patreon-Email",
     "Feature_requires_nickname": "Dieses Feature erfordert, dass du einen Nickname vergeben hast",
     "Contacts": "Kontakte",
+    "Save_for_all": "Für alle speichern",
     "New_contact": "User-ID des neuen Kontakts",
     "HELP": {
       "Welcome": "Willkommen zur Profilseite, hier kannst du dein Profil ansehen und bearbeiten.",
@@ -434,6 +438,9 @@
     "Confirm_delete": "Willst du diese Rotation wirklich löschen?",
     "Toggle_snapshot_mode": "Snapshot-Modus umschalten",
     "Rename_rotation": "Rotation umbenennen",
+    "Cross_class_setup": "Makro für klassenübergreifende Fähigkeiten erstellen",
+    "Include_sound_end": "Klangeffekt am Makroende hinzufügen",
+    "Step_by_step_report": "Schritt-für-Schritt Report",
     "CUSTOM": {
       "Recipe_configuration": "Einstellungen für Rezept",
       "Recipe_level": "Level für Rezept",

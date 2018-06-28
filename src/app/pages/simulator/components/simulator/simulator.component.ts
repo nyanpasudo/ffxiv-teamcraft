@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Craft} from '../../../../model/garland-tools/craft';
 import {Simulation} from '../../simulation/simulation';
 import {BehaviorSubject, combineLatest, Observable, of, ReplaySubject} from 'rxjs';
@@ -21,7 +21,7 @@ import {medicines} from '../../../../core/data/sources/medicines';
 import {BonusType} from '../../model/consumable-bonus';
 import {CraftingRotation} from '../../../../model/other/crafting-rotation';
 import {CustomCraftingRotation} from '../../../../model/other/custom-crafting-rotation';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {ImportRotationPopupComponent} from '../import-rotation-popup/import-rotation-popup.component';
 import {MacroPopupComponent} from '../macro-popup/macro-popup.component';
 import {PendingChangesService} from 'app/core/database/pending-changes/pending-changes.service';
@@ -33,7 +33,13 @@ import {Language} from 'app/core/data/language';
 import {ConsumablesService} from 'app/pages/simulator/model/consumables.service';
 import {I18nToolsService} from '../../../../core/tools/i18n-tools.service';
 import {AppUser} from 'app/model/list/app-user';
-import {debounceTime, filter, map, mergeMap, tap} from 'rxjs/operators';
+import {debounceTime, filter, first, map, mergeMap, tap} from 'rxjs/operators';
+import {CraftingJob} from '../../model/crafting-job.enum';
+import {StepByStepReportPopupComponent} from '../step-by-step-report-popup/step-by-step-report-popup.component';
+import {RotationNamePopupComponent} from '../rotation-name-popup/rotation-name-popup.component';
+import {CraftingRotationService} from '../../../../core/database/crafting-rotation.service';
+import {RecipeChoicePopupComponent} from '../recipe-choice-popup/recipe-choice-popup.component';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-simulator',
@@ -174,6 +180,8 @@ export class SimulatorComponent implements OnInit, OnDestroy {
 
     public selectedSet: GearSet;
 
+    public actionFailed = false;
+
     @Input()
     public set inputGearSet(set: GearSet) {
         if (set !== undefined) {
@@ -182,9 +190,6 @@ export class SimulatorComponent implements OnInit, OnDestroy {
             this.applyStats(set, this.levels, false);
         }
     }
-
-    @Input()
-    public rotationId: string;
 
     public hqIngredientsData: { id: number, amount: number, max: number, quality: number }[] = [];
 
@@ -209,6 +214,9 @@ export class SimulatorComponent implements OnInit, OnDestroy {
         this.applyStats(this.selectedSet, this.levels, false);
     }
 
+    @Input()
+    authorId: string;
+
     public _selectedMedicine: Consumable;
 
     private serializedRotation: string[];
@@ -227,25 +235,46 @@ export class SimulatorComponent implements OnInit, OnDestroy {
     private findActionsAutoTranslatedRegex: RegExp =
         new RegExp(/\/(ac|action)[\s]+([^<]+)?.*/, 'i');
 
-    private userData: AppUser;
+    public userData: AppUser;
+
+    @Input()
+    public rotation: CraftingRotation;
+
+    availableRotations$: Observable<CraftingRotation[]>;
+
+    public tooltipsDisabled = false;
+
+    private consumablesSortFn = (a, b) => {
+        const aName = this.i18nTools.getName(this.localizedDataService.getItem(a.itemId));
+        const bName = this.i18nTools.getName(this.localizedDataService.getItem(b.itemId));
+        if (aName > bName) {
+            return 1
+        } else if (aName < bName) {
+            return -1
+        } else {
+            // If they're both the same item, HQ first
+            return a.hq ? -1 : 1;
+        }
+    };
 
     constructor(private registry: CraftingActionsRegistry, private media: ObservableMedia, private userService: UserService,
                 private dataService: DataService, private htmlTools: HtmlToolsService, private dialog: MatDialog,
                 private pendingChanges: PendingChangesService, private localizedDataService: LocalizedDataService,
-                private translate: TranslateService, consumablesService: ConsumablesService, i18nTools: I18nToolsService) {
+                private translate: TranslateService, consumablesService: ConsumablesService, private i18nTools: I18nToolsService,
+                private snack: MatSnackBar, private cd: ChangeDetectorRef, rotationsService: CraftingRotationService,
+                private router: Router) {
+
+        this.availableRotations$ = this.userService.getUserData()
+            .pipe(
+                mergeMap(user => {
+                    return rotationsService.getUserRotations(user.$key);
+                })
+            );
 
         this.foods = consumablesService.fromData(foods)
-            .sort((a, b) => {
-                const aName = i18nTools.getName(this.localizedDataService.getItem(a.itemId));
-                const bName = i18nTools.getName(this.localizedDataService.getItem(b.itemId));
-                return aName > bName || !a.hq ? 1 : -1;
-            });
+            .sort(this.consumablesSortFn);
         this.medicines = consumablesService.fromData(medicines)
-            .sort((a, b) => {
-                const aName = i18nTools.getName(this.localizedDataService.getItem(a.itemId));
-                const bName = i18nTools.getName(this.localizedDataService.getItem(b.itemId));
-                return aName > bName || !a.hq ? 1 : -1;
-            });
+            .sort(this.consumablesSortFn);
 
         this.actions$.subscribe(actions => {
             this.dirty = false;
@@ -285,7 +314,7 @@ export class SimulatorComponent implements OnInit, OnDestroy {
                             }),
                             tap(sets => this.levels = <CrafterLevels>sets.map(set => set.level))
                         );
-                })
+                }),
             );
 
         this.simulation$ = combineLatest(
@@ -302,7 +331,11 @@ export class SimulatorComponent implements OnInit, OnDestroy {
                 return simulation.run(true, step);
             }
             return simulation.run(true);
-        });
+        }).pipe(
+            tap(result => {
+                this.actionFailed = result.steps.find(step => !step.success) !== undefined;
+            })
+        );
 
         this.report$ = this.result$
             .pipe(
@@ -311,6 +344,13 @@ export class SimulatorComponent implements OnInit, OnDestroy {
                 mergeMap(() => this.simulation$),
                 map(simulation => simulation.getReliabilityReport())
             );
+    }
+
+    useRotation(rotation: CraftingRotation): void {
+        this.rotation = rotation;
+        this.authorId = rotation.authorId;
+        this.actions = this.registry.deserializeRotation(rotation.rotation);
+        this.canSave = this.userData.$key === rotation.authorId;
     }
 
     private populateMissingSets(sets: GearSet[]): GearSet[] {
@@ -389,8 +429,23 @@ export class SimulatorComponent implements OnInit, OnDestroy {
         });
     }
 
+    showStepByStepReport(result: SimulationResult): void {
+        this.dialog.open(StepByStepReportPopupComponent, {data: result});
+    }
+
     generateMacro(): void {
-        this.dialog.open(MacroPopupComponent, {data: this.actions$.getValue()});
+        this.crafterStats$
+            .pipe(
+                first()
+            ).subscribe(crafterStats => {
+            this.dialog.open(MacroPopupComponent, {
+                data:
+                    {
+                        rotation: this.actions$.getValue(),
+                        job: CraftingJob[crafterStats.jobId - 8]
+                    }
+            });
+        });
     }
 
     private markAsDirty(): void {
@@ -398,22 +453,33 @@ export class SimulatorComponent implements OnInit, OnDestroy {
         this.dirty = true;
     }
 
-    save(): void {
+    save(asNew = false): void {
+        let key = undefined;
+        if (!asNew && this.rotation !== undefined) {
+            key = this.rotation.$key;
+        }
         if (!this.customMode) {
             this.onsave.emit({
-                $key: this.rotationId,
+                $key: key,
+                name: this.rotation === undefined ? '' : this.rotation.name,
                 rotation: this.serializedRotation,
                 recipe: this.recipeSync,
+                authorId: this.authorId,
                 consumables: {food: this._selectedFood, medicine: this._selectedMedicine}
             });
         } else {
             this.onsave.emit(<CustomCraftingRotation>{
-                $key: this.rotationId,
+                $key: key,
+                name: this.rotation === undefined ? '' : this.rotation.name,
                 stats: this.selectedSet,
                 rotation: this.serializedRotation,
                 recipe: this.recipeSync,
+                authorId: this.authorId,
                 consumables: {food: this._selectedFood, medicine: this._selectedMedicine}
             });
+        }
+        if (asNew) {
+            this.snack.open(this.translate.instant('SIMULATOR.Save_as_new_done'), null, {duration: 3000});
         }
     }
 
@@ -478,17 +544,37 @@ export class SimulatorComponent implements OnInit, OnDestroy {
         }
     }
 
+    changeRecipe(): void {
+        this.dialog.open(RecipeChoicePopupComponent).afterClosed()
+            .pipe(
+                filter(res => res !== undefined && res !== null && res !== '')
+            ).subscribe(result => {
+            const path = ['simulator', result.itemId, result.recipeId];
+            if (this.rotation.$key !== undefined) {
+                path.push(this.rotation.$key);
+            }
+            this.router.navigate(path);
+        });
+    }
+
+    editRotationName(rotation: CraftingRotation): void {
+        this.dialog.open(RotationNamePopupComponent, {data: rotation})
+            .afterClosed()
+            .pipe(
+                filter(res => res !== undefined && res.length > 0 && res !== this.rotation.getName())
+            ).subscribe(name => {
+            this.rotation.name = name;
+            this.cd.detectChanges();
+            this.markAsDirty();
+        });
+    }
+
     saveSet(set: GearSet): void {
         // First of all, remove old gearset in userData for this job.
         this.userData.gearSets = (this.userData.gearSets || []).filter(s => s.jobId !== set.jobId);
         // Then add this set to custom sets
         set.custom = true;
         this.userData.gearSets.push(set);
-        this.userService.set(this.userData.$key, this.userData).subscribe();
-    }
-
-    resetSet(set: GearSet): void {
-        this.userData.gearSets = this.userData.gearSets.filter(s => s.jobId !== set.jobId);
         this.userService.set(this.userData.$key, this.userData).subscribe();
     }
 

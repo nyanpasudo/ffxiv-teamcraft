@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {List} from '../../../model/list/list';
 import {MatDialog, MatExpansionPanel, MatSnackBar} from '@angular/material';
 import {TranslateService} from '@ngx-translate/core';
@@ -15,16 +15,18 @@ import {ListTemplate} from '../../../core/database/list-template/list-template';
 import {ListTemplateService} from '../../../core/database/list-template/list-template.service';
 import {TemplatePopupComponent} from '../../../pages/template/template-popup/template-popup.component';
 import {PermissionsPopupComponent} from '../permissions-popup/permissions-popup.component';
-import {catchError, filter, first, mergeMap} from 'rxjs/operators';
+import {catchError, filter, first, map, mergeMap} from 'rxjs/operators';
 import {ListRow} from '../../../model/list/list-row';
 import {LinkToolsService} from '../../../core/tools/link-tools.service';
+import {ListTag} from '../../../model/list/list-tag.enum';
+import {ListTagsPopupComponent} from '../../../pages/list/list-tags-popup/list-tags-popup.component';
 
 @Component({
     selector: 'app-list-panel',
     templateUrl: './list-panel.component.html',
     styleUrls: ['./list-panel.component.scss']
 })
-export class ListPanelComponent extends ComponentWithSubscriptions implements OnInit {
+export class ListPanelComponent extends ComponentWithSubscriptions implements OnInit, OnChanges {
 
     @Input()
     public list: List;
@@ -77,6 +79,8 @@ export class ListPanelComponent extends ComponentWithSubscriptions implements On
     private userNickname: string;
 
     public anonymous: boolean;
+
+    public tags: ListTag[];
 
     constructor(private snack: MatSnackBar, private translator: TranslateService,
                 private listService: ListService, private translate: TranslateService, private media: ObservableMedia,
@@ -131,6 +135,19 @@ export class ListPanelComponent extends ComponentWithSubscriptions implements On
             });
     }
 
+    public openTagsPopup(): void {
+        this.dialog.open(ListTagsPopupComponent, {data: this.list}).afterClosed()
+            .pipe(
+                map(tags => {
+                    this.list.tags = tags;
+                    return this.list;
+                }),
+                mergeMap(list => {
+                    return this.listService.set(list.$key, list);
+                })
+            ).subscribe();
+    }
+
     public forkList(): void {
         const fork: List = this.list.clone();
         // Update the forks count.
@@ -163,16 +180,17 @@ export class ListPanelComponent extends ComponentWithSubscriptions implements On
     ngOnInit(): void {
         this.author = this.userService.getCharacter(this.list.authorId)
             .pipe(
-                catchError(err => {
+                catchError(() => {
                     return of(null);
                 })
             );
-
-        this.templateService.getByListId(this.list.$key).subscribe(res => {
-            if (res !== undefined) {
-                this.templateUrl = res.getUrl();
-            }
-        });
+        if (!this.list.public) {
+            this.templateService.getByListId(this.list.$key).subscribe(res => {
+                if (res !== undefined) {
+                    this.templateUrl = res.getUrl();
+                }
+            });
+        }
 
         this.userService.getUserData().subscribe(u => {
             this.userUid = u.$key;
@@ -183,5 +201,13 @@ export class ListPanelComponent extends ComponentWithSubscriptions implements On
 
     public isMobile(): boolean {
         return this.media.isActive('xs');
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.list !== undefined && this.list.tags !== undefined && this.list.tags.length > 0) {
+            this.tags = this.list.tags.filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+        }
     }
 }

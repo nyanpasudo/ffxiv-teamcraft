@@ -43,7 +43,7 @@ export class ListsComponent extends ComponentWithSubscriptions implements OnInit
 
     reloader$ = new BehaviorSubject<void>(null);
 
-    lists: Observable<{ basicLists: List[], rows?: { [index: string]: List[] } }>;
+    lists: Observable<{ basicLists: List[], publicLists?: List[], rows?: { [index: string]: List[] } }>;
 
     sharedLists: Observable<List[]>;
 
@@ -216,7 +216,7 @@ export class ListsComponent extends ComponentWithSubscriptions implements OnInit
         this.lists.pipe(
             first(),
             map(display => {
-                let res = display.basicLists;
+                let res = display.basicLists.concat(display.publicLists);
                 Object.keys(display.rows).map(key => display.rows[key]).forEach(row => {
                     res = [...res, ...row];
                 });
@@ -279,15 +279,20 @@ export class ListsComponent extends ComponentWithSubscriptions implements OnInit
     ngOnInit() {
         this.sharedLists = this.userService.getUserData().pipe(
             mergeMap(user => {
-                return combineLatest((user.sharedLists || [])
-                    .map(listId => this.listService.get(listId)
+                return combineLatest((user.sharedLists || []).map(listId => this.listService.get(listId)
                         .pipe(
                             catchError(() => {
                                 user.sharedLists = user.sharedLists.filter(id => id !== listId);
                                 return this.userService.set(user.$key, user).pipe(map(() => null));
-                            }),
-                            map(lists => lists.filter(l => l !== null).filter(l => l.getPermissions(user.$key).write === true))
-                        )));
+                            })
+                        )
+                    )
+                )
+                    .pipe(
+                        map(lists => lists.filter(l => l !== null).filter(l => {
+                            return l.getPermissions(user.$key).write === true
+                        }))
+                    );
             })
         );
         this.workshops = this.userService.getUserData().pipe(
@@ -382,7 +387,19 @@ export class ListsComponent extends ComponentWithSubscriptions implements OnInit
                                                             }
                                                         }),
                                                         map(lists => {
-                                                            return this.workshopService.getListsByWorkshop(lists, workshops);
+                                                            const layout = this.workshopService.getListsByWorkshop(lists, workshops);
+                                                            const publicLists = [];
+                                                            const basicLists = [];
+                                                            layout.basicLists.forEach(list => {
+                                                                if (list.public) {
+                                                                    publicLists.push(list);
+                                                                } else {
+                                                                    basicLists.push(list);
+                                                                }
+                                                            });
+                                                            layout.basicLists = basicLists;
+                                                            layout.publicLists = publicLists;
+                                                            return layout;
                                                         })
                                                     );
                                             }))

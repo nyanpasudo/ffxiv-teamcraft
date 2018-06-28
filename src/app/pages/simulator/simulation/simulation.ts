@@ -6,6 +6,7 @@ import {EffectiveBuff} from '../model/effective-buff';
 import {Buff} from '../model/buff.enum';
 import {SimulationResult} from './simulation-result';
 import {SimulationReliabilityReport} from './simulation-reliability-report';
+import {Tables} from '../model/tables';
 
 export class Simulation {
 
@@ -72,7 +73,7 @@ export class Simulation {
             this.crafterStats.craftsmanship--;
             this.reset();
         }
-        while (this.run(true).success) {
+        while (this.run(true).hqPercent >= 100) {
             this.crafterStats._control--;
             this.reset();
         }
@@ -166,6 +167,8 @@ export class Simulation {
         const probabilityRoll = linear ? 0 : Math.random() * 100;
         const qualityBefore = this.quality;
         const progressionBefore = this.progression;
+        const durabilityBefore = this.durability;
+        const cpBefore = this.availableCP;
         if (action.getSuccessRate(this) >= probabilityRoll) {
             action.execute(this);
         } else {
@@ -173,18 +176,17 @@ export class Simulation {
         }
         // Even if the action failed, we have to remove the durability cost
         this.durability -= action.getDurabilityCost(this);
-        const CPCost = action.getCPCost(this, linear);
         // Even if the action failed, CP has to be consumed too
-        this.availableCP -= CPCost;
+        this.availableCP -= action.getCPCost(this, linear);
         // Push the result to the result array
         this.steps.push({
             action: action,
             success: action.getSuccessRate(this) >= probabilityRoll,
             addedQuality: this.quality - qualityBefore,
             addedProgression: this.progression - progressionBefore,
-            cpDifference: CPCost,
+            cpDifference: this.availableCP - cpBefore,
             skipped: false,
-            solidityDifference: action.getDurabilityCost(this),
+            solidityDifference: this.durability - durabilityBefore,
             state: this.state
         });
         if (this.progression >= this.recipe.progress) {
@@ -195,26 +197,15 @@ export class Simulation {
         }
     }
 
-    private qualityPercentFromHqPercent(hqPercent: number): number {
-        return -5.6604E-6 * Math.pow(hqPercent, 4)
-            + 0.0015369705 * Math.pow(hqPercent, 3)
-            - 0.1426469573 * Math.pow(hqPercent, 2)
-            + 5.6122722959 * hqPercent - 5.5950384565;
-    }
-
     private getHQPercent(): number {
         const qualityPercent = Math.min(this.quality / this.recipe.quality, 1) * 100;
-        let hqPercent = 0;
         if (qualityPercent === 0) {
             return 1;
         } else if (qualityPercent >= 100) {
             return 100;
         } else {
-            while (this.qualityPercentFromHqPercent(hqPercent) < qualityPercent && hqPercent < 100) {
-                hqPercent += 1;
-            }
+            return Tables.HQ_TABLE[Math.floor(qualityPercent)];
         }
-        return hqPercent;
     }
 
     public hasBuff(buff: Buff): boolean {

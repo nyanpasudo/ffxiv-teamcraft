@@ -25,8 +25,9 @@ import {WorkshopService} from 'app/core/database/workshop.service';
 import {Workshop} from '../../../model/other/workshop';
 import {CraftingRotationService} from 'app/core/database/crafting-rotation.service';
 import {CraftingRotation} from '../../../model/other/crafting-rotation';
-import {debounceTime, distinctUntilChanged, filter, map, mergeMap, publishReplay, refCount} from 'rxjs/operators';
-import {first, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, first, map, mergeMap, publishReplay, refCount, switchMap} from 'rxjs/operators';
+import {SearchResult} from '../../../model/list/search-result';
+import {SettingsService} from '../../settings/settings.service';
 
 declare const ga: Function;
 
@@ -37,7 +38,9 @@ declare const ga: Function;
 })
 export class RecipesComponent extends PageComponent implements OnInit {
 
-    recipes: Recipe[] = [];
+    results: SearchResult[] = [];
+
+    selectedItems: SearchResult[] = [];
 
     @ViewChild('filter')
     filterElement: ElementRef;
@@ -120,7 +123,8 @@ export class RecipesComponent extends PageComponent implements OnInit {
                 private htmlTools: HtmlToolsService, private listService: ListService,
                 private localizedData: LocalizedDataService, private userService: UserService,
                 protected helpService: HelpService, protected media: ObservableMedia,
-                private workshopService: WorkshopService, private rotationsService: CraftingRotationService) {
+                private workshopService: WorkshopService, private rotationsService: CraftingRotationService,
+                public settings: SettingsService) {
         super(dialog, helpService, media);
     }
 
@@ -210,12 +214,12 @@ export class RecipesComponent extends PageComponent implements OnInit {
         let hasFilters = false;
         this.filters.forEach(f => hasFilters = hasFilters || f.enabled);
         if ((this.query === undefined || this.query === '') && !hasFilters) {
-            this.recipes = [];
+            this.results = [];
             this.loading = false;
             return;
         }
-        this.subscriptions.push(this.db.searchRecipe(this.query, this.filters).subscribe(results => {
-            this.recipes = results;
+        this.subscriptions.push(this.db.searchItem(this.query, this.filters, this.settings.recipesOnlySearch).subscribe(results => {
+            this.results = results;
             this.loading = false;
         }));
     }
@@ -236,6 +240,46 @@ export class RecipesComponent extends PageComponent implements OnInit {
      */
     getStars(nb: number): string {
         return this.htmlTools.generateStars(nb);
+    }
+
+    resultChecked(item: SearchResult, checked: boolean): void {
+        if (checked) {
+            this.selectedItems.push(item);
+        } else {
+            this.selectedItems = this.selectedItems.filter(row => row !== item);
+        }
+    }
+
+    addSelected(list: List, key: string): void {
+        const additions = [];
+        this.selectedItems
+            .forEach(item => {
+                additions.push(this.resolver.addToList(item.itemId, list, (<Recipe>item).recipeId, 1));
+            });
+        this.subscriptions.push(this.dialog.open(BulkAdditionPopupComponent, {
+            data: {additions: additions, key: key, listname: list.name},
+            disableClose: true
+        }).afterClosed().subscribe(() => {
+            this.selectedItems = [];
+            this.snackBar.open(
+                this.translator.instant('Recipes_Added', {listname: list.name}),
+                this.translator.instant('Open'),
+                {
+                    duration: 10000,
+                    panelClass: ['snack']
+                }
+            ).onAction().subscribe(() => {
+                this.listService.getRouterPath(key).subscribe(path => {
+                    this.router.navigate(path);
+                });
+            });
+        }));
+    }
+
+    addSelectedToNewList(): void {
+        this.createNewList().then(res => {
+            this.addSelected(res.list, res.id);
+        });
     }
 
 
@@ -308,9 +352,10 @@ export class RecipesComponent extends PageComponent implements OnInit {
      */
     addAllRecipes(list: List, key: string): void {
         const additions = [];
-        this.recipes.forEach(recipe => {
-            additions.push(this.resolver.addToList(recipe.itemId, list, recipe.recipeId, 1));
-        });
+        this.results
+            .forEach(item => {
+                additions.push(this.resolver.addToList(item.itemId, list, (<Recipe>item).recipeId, 1));
+            });
         this.subscriptions.push(this.dialog.open(BulkAdditionPopupComponent, {
             data: {additions: additions, key: key, listname: list.name},
             disableClose: true

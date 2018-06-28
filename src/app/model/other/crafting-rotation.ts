@@ -5,7 +5,7 @@ import {DeserializeAs} from '@kaiu/serializer';
 
 export class CraftingRotation extends DataModel {
 
-    name: string;
+    public name: string;
 
     public recipe: Partial<Craft>;
 
@@ -16,6 +16,10 @@ export class CraftingRotation extends DataModel {
     public description: string;
 
     public defaultItemId?: number;
+
+    public defaultRecipeId?: number;
+
+    public folder?: string;
 
     @DeserializeAs(SavedConsumables)
     public consumables: SavedConsumables = new SavedConsumables();

@@ -35,10 +35,11 @@ import {ListLayoutPopupComponent} from '../list-layout-popup/list-layout-popup.c
 import {ComponentWithSubscriptions} from '../../../core/component/component-with-subscriptions';
 import {PermissionsPopupComponent} from '../../../modules/common-components/permissions-popup/permissions-popup.component';
 import {ListFinishedPopupComponent} from '../list-finished-popup/list-finished-popup.component';
-import {filter} from 'rxjs/operators';
-import {first, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {filter, first, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {PlatformService} from '../../../core/tools/platform.service';
 import {LinkToolsService} from '../../../core/tools/link-tools.service';
+import {I18nToolsService} from '../../../core/tools/i18n-tools.service';
+import {LocalizedDataService} from '../../../core/data/localized-data.service';
 
 declare const ga: Function;
 
@@ -105,7 +106,8 @@ export class ListDetailsComponent extends ComponentWithSubscriptions implements 
                 private listService: ListService, private listManager: ListManagerService, private snack: MatSnackBar,
                 private translate: TranslateService, private router: Router, private eorzeanTimeService: EorzeanTimeService,
                 public settings: SettingsService, private layoutService: LayoutService, private cd: ChangeDetectorRef,
-                public platform: PlatformService, private linkTools: LinkToolsService) {
+                public platform: PlatformService, private linkTools: LinkToolsService, private l12n: LocalizedDataService,
+                private i18nTools: I18nToolsService) {
         super();
         this.initFilters();
         this.listDisplay = this.listData$
@@ -150,7 +152,8 @@ export class ListDetailsComponent extends ComponentWithSubscriptions implements 
         if (this.listData !== undefined && this.listData !== null) {
             // We are using setTimeout here to avoid creating a new dialog box during change detection cycle.
             setTimeout(() => {
-                if (!this.upgradingList && this.listData.isOutDated() && this.listData.authorId === this.userData.$key) {
+                if (!this.upgradingList && this.listData.isOutDated() && this.userData !== undefined
+                    && this.listData.authorId === this.userData.$key) {
                     this.upgradeList();
                 }
             }, 50);
@@ -277,6 +280,24 @@ export class ListDetailsComponent extends ComponentWithSubscriptions implements 
         return this.user !== undefined && this.user !== null && this.user.uid === this.listData.authorId;
     }
 
+    public getTextExport(display: LayoutRowDisplay[]): string {
+        return display
+            .filter(displayRow => displayRow.rows.length > 0)
+            .reduce((exportString, displayRow) => {
+                return exportString + displayRow.rows.reduce((rowExportString, row) => {
+                    return rowExportString + `${row.amount}x ${this.i18nTools.getName(this.l12n.getItem(row.id))}\n`
+                }, `${this.translate.instant(displayRow.title)}:\n`) + '\n';
+            }, `${this.linkTools.getLink(`list/${this.listData.$key}`)
+                }\n\n${this.listData.name}: \n\n${
+                this.getCrystalsTextExport(this.translate.instant('Crystals'), this.listData.crystals)}`);
+    }
+
+    public getCrystalsTextExport(title: string, crystals: ListRow[]): string {
+        return crystals.reduce((exportString, row) => {
+            return exportString + `${row.amount}x ${this.i18nTools.getName(this.l12n.getItem(row.id))}\n`
+        }, `${title} :\n`);
+    }
+
     upgradeList(): void {
         this.upgradingList = true;
         const dialogRef = this.dialog.open(RegenerationPopupComponent, {disableClose: true});
@@ -345,7 +366,7 @@ export class ListDetailsComponent extends ComponentWithSubscriptions implements 
                     this.listService.remove(list.$key).pipe(first()).subscribe(() => {
                         this.router.navigate(['recipes']);
                     });
-                } else if (l.isComplete()) {
+                } else if (l.isComplete() && !l.public) {
                     this.onCompletion(list);
                 }
             })
@@ -353,7 +374,7 @@ export class ListDetailsComponent extends ComponentWithSubscriptions implements 
     }
 
     private onCompletion(list: List): void {
-        if (!this.completionDialogOpen) {
+        if (!this.completionDialogOpen && this.userData.$key === this.listData.authorId) {
             this.completionDialogOpen = true;
             this.dialog.open(ListFinishedPopupComponent)
                 .afterClosed()

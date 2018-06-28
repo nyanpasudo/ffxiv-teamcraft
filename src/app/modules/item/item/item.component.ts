@@ -58,7 +58,7 @@ import {first, map, mergeMap, publishReplay, refCount, tap} from 'rxjs/operators
 })
 export class ItemComponent extends ComponentWithSubscriptions implements OnInit, OnChanges {
 
-    private static TRADE_SOURCES_PRIORITIES = {
+    public static TRADE_SOURCES_PRIORITIES = {
         // Just in case
         25: 25, // Wolf Mark
         29: 25, // MGP
@@ -102,6 +102,7 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
         21080: 13, // Moogle
         21081: 13, // Kojin
         21935: 13, // Ananta
+        22525: 13, // Namazu
         // Primals
         7004: 10, // Weekly quest Garuda/Titan/Ifrit
         7850: 10, // Leviathan
@@ -117,6 +118,7 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
         19110: 10, // Lakshmi
         21196: 10, // Shinryu
         21773: 10, // Byakko
+        23043: 10, // Tsukuyomi
         // Raids
         7577: 8, // Sands of Time
         7578: 8, // Oil of Time
@@ -203,6 +205,7 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
         21783: 8, // Sigmascape Datalog v3.0
         21784: 8, // Sigmascape Datalog v4.0
         21785: 8, // Sigmascape Crystalloid
+        23174: 8, // Gougan Coin
         // World bosses
         6155: 5, // Behemoth
         6164: 5, // Odin
@@ -313,7 +316,7 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
     }
 
     getCraft(recipeId: string): CraftedBy {
-        if (this.item.craftedBy === undefined || this.item.craftedBy[0].icon === '') {
+        if (this.item.craftedBy === undefined || this.item.craftedBy.length === 0 || this.item.craftedBy[0].icon === '') {
             return undefined;
         }
         return this.item.craftedBy.find(craft => {
@@ -442,6 +445,7 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
 
     updateRequiredForEndCraft(): void {
         const recipesNeedingItem = this.list.recipes
+            .filter(recipe => recipe.requires !== undefined)
             .filter(recipe => recipe.requires.find(req => req.id === this.item.id) !== undefined);
         if (recipesNeedingItem.length === 0) {
             this.requiredForFinalCraft = 0;
@@ -454,17 +458,30 @@ export class ItemComponent extends ComponentWithSubscriptions implements OnInit,
         }
     }
 
-    toggleAlarm(id: number, type?: number): void {
+    toggleAlarm(id: number, type: number = 0, groupName?: string): void {
         if (this.alarmService.hasAlarm(id)) {
-            this.alarmService.unregister(id);
+            this.removeAlarm(id);
         } else {
-            if (type > 0) {
-                const alarms = this.alarmService.generateAlarms(this.item).filter(alarm => alarm.type === type);
-                this.alarmService.registerAlarms(...alarms);
-            } else {
-                this.alarmService.register(this.item);
-            }
+            this.addAlarm(id, type, groupName);
         }
+    }
+
+    addAlarm(id: number, type: number = 0, groupName?: string): void {
+        if (type > 0) {
+            const alarms = this.alarmService.generateAlarms(this.item).filter(alarm => alarm.type === type).map(alarm => {
+                if (groupName !== undefined) {
+                    alarm.groupName = groupName;
+                }
+                return alarm;
+            });
+            this.alarmService.registerAlarms(...alarms);
+        } else {
+            this.alarmService.register(this.item, groupName);
+        }
+    }
+
+    removeAlarm(id: number): void {
+        this.alarmService.unregister(id);
     }
 
     updateHasAlarm(itemId): void {
